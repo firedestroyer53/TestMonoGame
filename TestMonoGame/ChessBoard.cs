@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TestMonoGame
+﻿namespace TestMonoGame
 {
     internal class ChessBoard
     {
         //class for a chessboard that you can put pieces on
-        public int[,] board = new int[8, 8];
+        public static int[,] board = new int[8, 8];
         public int cellSize = 64;
-        public void placePiece(Piece piece)
+        public static void placePiece(Piece piece)
         {
             //method to place a piece on the board
             board[piece.pieceX, piece.pieceY] = piece.pieceValue;
         }
-        public void removePiece(Piece piece)
+        public static void removePiece(Piece piece)
         {
             //method to remove a piece from the board
             board[piece.pieceX, piece.pieceY] = 0;
         }
-        public void movePiece(Piece piece, int x, int y)
+        public static void movePiece(Piece piece, int x, int y)
         {
             //method to move a piece on the board
             removePiece(piece);
@@ -57,5 +51,5 @@ namespace TestMonoGame
                 }
             }
         }
-    }   
+    }
 }

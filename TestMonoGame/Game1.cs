@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using System;
-using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace TestMonoGame;
 
@@ -13,9 +12,15 @@ public class Game1 : Game
     Texture2D blackSquare;
     Texture2D whitePawnTexture;
     Texture2D blackPawnTexture;
+
+
+
     private GraphicsDeviceManager _graphics;
     private SpriteBatch spriteBatch;
-    
+    Color white = Color.White;
+    Color black = Color.Black;
+    List<Piece> whitePawns = new List<Piece>();
+    List<Piece> blackPawns = new List<Piece>();
     
 
 
@@ -31,8 +36,36 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
         
+        // TODO: Add your initialization logic here
+        for (int i = 1; i <= 8; i++)
+        {
+            // Create a new white pawn with the current pawn number and position.
+            Piece whitePawn = new Piece(true, i, i, 2);
+
+            // Create a new black pawn with the current pawn number and position.
+
+
+            // Add the pawns to a list or array for later use.
+            // For example:
+            whitePawns.Add(whitePawn);
+        }
+        // Create eight black pawns.
+        for (int i = 1; i <= 8; i++)
+        {
+            // Create a new black pawn with the current pawn number and position.
+            Piece blackPawn = new Piece(false, i, i, 7);
+
+            // Add the pawn to the list of black pawns.
+            blackPawns.Add(blackPawn);
+        }
+
+        // Position the black pawns on the 7th rank of the board.
+        for (int i = 0; i < blackPawns.Count; i++)
+        {
+            blackPawns[i].pieceY = 7;
+            blackPawns[i].pieceX = i + 1;
+        }
 
 
         base.Initialize();
@@ -43,7 +76,7 @@ public class Game1 : Game
         spriteBatch = new SpriteBatch(GraphicsDevice);
 
         // TODO: use this.Content to load your game content here
-        
+
         whiteSquare = Content.Load<Texture2D>("WhiteSquare");
         blackSquare = Content.Load<Texture2D>("BlackSquare");
         whitePawnTexture = Content.Load<Texture2D>("WhitePawn");
@@ -52,64 +85,20 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-        //    Keyboard.GetState().IsKeyDown(Keys.Escape))
-        //    Exit();
-        //var kstate = Keyboard.GetState();
-        //var movement = Vector2.Zero;
-        //var mstate = Mouse.GetState();
+        MouseState mstate = Mouse.GetState();
 
-        //// Create a dictionary that maps keys to movement vectors
-        //var keyVectors = new Dictionary<Keys, Vector2>
-        //{
-        //    { Keys.Up, new Vector2(0, -1) },
-        //    { Keys.Down, new Vector2(0, 1) },
-        //    { Keys.Left, new Vector2(-1, 0) },
-        //    { Keys.Right, new Vector2(1, 0) }
-        //};
-
-        //// Sum up the movement vectors for all keys being pressed
-        //foreach (var keyVector in keyVectors)
-        //{
-        //    if (kstate.IsKeyDown(keyVector.Key))
-        //    {
-        //        movement += keyVector.Value;
-        //    }
-        //}
-
-        //if (movement != Vector2.Zero)
-        //{
-        //    // Normalize the movement vector
-        //    movement.Normalize();
-
-        //    // Multiply the normalized movement vector by the ball speed
-        //    movement *= ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-        //    // Move the ball in the final movement direction
-        //    ballPosition += movement;
-        //}
-
-
-        //if (ballPosition.X > _graphics.PreferredBackBufferWidth - ballTexture.Width / 2)
-        //{
-        //    ballPosition.X = _graphics.PreferredBackBufferWidth - ballTexture.Width / 2;
-        //}
-        //else if (ballPosition.X < ballTexture.Width / 2)
-        //{
-        //    ballPosition.X = ballTexture.Width / 2;
-        //}
-
-        //if (ballPosition.Y > _graphics.PreferredBackBufferHeight - ballTexture.Height / 2)
-        //{
-        //    ballPosition.Y = _graphics.PreferredBackBufferHeight - ballTexture.Height / 2;
-        //}
-        //else if (ballPosition.Y < ballTexture.Height / 2)
-        //{
-        //    ballPosition.Y = ballTexture.Height / 2;
-        //}
+        // Check if the mouse is currently over any of the white pawns.
+        foreach (Piece whitePawn in whitePawns)
+        {
+            if (whitePawn.isMouseOver(mstate) && mstate.LeftButton == ButtonState.Pressed)
+            {
+                
+            }
+        }
 
         base.Update(gameTime);
     }
+
 
     protected override void Draw(GameTime gameTime)
     {
@@ -146,42 +135,8 @@ public class Game1 : Game
                 );
             }
         }
-        Color white = Color.White;
-        Color black = Color.Black;
-        List<Piece> whitePawns = new List<Piece>();
-        List<Piece> blackPawns = new List<Piece>();
-        // Create eight pawns for each color.
+
         
-        for (int i = 1; i <= 8; i++)
-        {
-            // Create a new white pawn with the current pawn number and position.
-            Piece whitePawn = new Piece(true, i, i, 2);
-
-            // Create a new black pawn with the current pawn number and position.
-            
-
-            // Add the pawns to a list or array for later use.
-            // For example:
-            whitePawns.Add(whitePawn);
-        }
-        // Create eight black pawns.
-        for (int i = 1; i <= 8; i++)
-        {
-            // Create a new black pawn with the current pawn number and position.
-            Piece blackPawn = new Piece(false, i, i, 7);
-
-            // Add the pawn to the list of black pawns.
-            blackPawns.Add(blackPawn);
-        }
-
-        // Position the black pawns on the 7th rank of the board.
-        for (int i = 0; i < blackPawns.Count; i++)
-        {
-            blackPawns[i].pieceY = 7;
-            blackPawns[i].pieceX = i + 1;
-        }
-
-
         //draw the pawns onto the screen
         foreach (Piece whitePawn in whitePawns)
         {
@@ -206,8 +161,8 @@ public class Game1 : Game
                              effects: SpriteEffects.None,
                              layerDepth: 0f);
         }
-
+        
         spriteBatch.End();
-    base.Draw(gameTime);
+        base.Draw(gameTime);
     }
 }
