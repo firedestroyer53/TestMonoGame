@@ -1,14 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using System;
 
 namespace TestMonoGame
 {
-    
+
+    public enum PieceType
+    {
+        Pawn,
+        King,
+        Queen,
+        Bishop,
+        Knight,
+        Rook
+    }
 
     public abstract class Piece
     {
-        
         // Template for a chess piece class
         public bool isWhite;
         public int pieceX;
@@ -16,6 +23,10 @@ namespace TestMonoGame
         //Position vector of X and Y
         public Vector2 position;
         private ChessBoard board;
+
+        // getPiece method which returns what type of piece it is
+        public abstract PieceType GetPieceType();
+
 
         // Class constructor
         public Piece(bool iswhite, int x, int y, ChessBoard board)
@@ -43,7 +54,7 @@ namespace TestMonoGame
                 return false;
             }
 
-            // Check if there is a piece at the destination
+            // Check if there is a piece at the destination 
             Piece pieceAtDestination = board[newX, newY];
             if (pieceAtDestination != null && pieceAtDestination.isWhite == isWhite)
             {
@@ -77,6 +88,10 @@ namespace TestMonoGame
     {
         public bool HasMoved { get; set; }
 
+        public override PieceType GetPieceType()
+        {
+            return PieceType.Pawn;
+        }
         public Pawn(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
         {
             HasMoved = false;
@@ -87,7 +102,7 @@ namespace TestMonoGame
             // Check if the move is one square forward, or two squares forward if the pawn has not moved yet
             int dy = newY - pieceY;
             int dx = newX - pieceX;
-            if (dy == -1 && newX == pieceX && board[newX,newY] == null) // white pawn moving one square forward
+            if (dy == -1 && newX == pieceX && board[newX, newY] == null) // white pawn moving one square forward
             {
                 HasMoved = true;
                 return true;
@@ -107,30 +122,38 @@ namespace TestMonoGame
                 HasMoved = true;
                 return true;
             }
-            else if (dx == 1 && dy == -1 && board[newX,newY].isWhite != isWhite) // white pawn capturing to the right
+            else if (dx == 1 && dy == -1 && board[newX, newY].isWhite != isWhite) // white pawn capturing to the right
             {
+                HasMoved = true;
                 return true;
             }
             else if (dx == -1 && dy == -1 && board[newX, newY].isWhite != isWhite) // white pawn capturing to the left
             {
+                HasMoved = true;
                 return true;
             }
             else if (dx == 1 && dy == 1 && board[newX, newY].isWhite != isWhite) // black pawn capturing to the right
             {
+                HasMoved = true;
                 return true;
             }
             else if (dx == -1 && dy == 1 && board[newX, newY].isWhite != isWhite) // black pawn capturing to the left
             {
+                HasMoved = true;
                 return true;
             }
             return false;
-        
         }
     }
     public class King : Piece
     {
         public King(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
         {
+        }
+
+        public override PieceType GetPieceType()
+        {
+            return PieceType.King;
         }
 
         public override bool IsValidMove(int newX, int newY, ChessBoard board)
@@ -146,6 +169,11 @@ namespace TestMonoGame
         {
         }
 
+        public override PieceType GetPieceType()
+        {
+            return PieceType.Queen;
+        }
+
         public override bool IsValidMove(int newX, int newY, ChessBoard board)
         {
             // Check if the move is along a straight line in any direction
@@ -157,6 +185,11 @@ namespace TestMonoGame
     {
         public Rook(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
         {
+        }
+
+        public override PieceType GetPieceType()
+        {
+            return PieceType.Rook;
         }
 
         public override bool IsValidMove(int newX, int newY, ChessBoard board)
@@ -172,6 +205,11 @@ namespace TestMonoGame
         {
         }
 
+        public override PieceType GetPieceType()
+        {
+            return PieceType.Bishop;
+        }
+
         public override bool IsValidMove(int newX, int newY, ChessBoard board)
         {
             // Check if the move is along a diagonal line
@@ -183,6 +221,11 @@ namespace TestMonoGame
     {
         public Knight(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
         {
+        }
+
+        public override PieceType GetPieceType()
+        {
+            return PieceType.Knight;
         }
 
         public override bool IsValidMove(int newX, int newY, ChessBoard board)
