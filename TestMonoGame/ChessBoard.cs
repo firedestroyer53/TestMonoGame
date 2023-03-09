@@ -1,53 +1,87 @@
-﻿namespace TestMonoGame
+﻿using System;
+using System.Collections;
+
+namespace TestMonoGame
 {
-    internal class ChessBoard
+    internal class ChessBoard : IEnumerable
     {
-        //class for a chessboard that you can put pieces on
-        public static int[,] board = new int[8, 8];
-        public int cellSize = 64;
-        public static void placePiece(Piece piece)
+        // class for a chessboard
+        public static Piece[,] board = new Piece[8, 8];
+        
+        public void placePiece(Piece piece)
         {
-            //method to place a piece on the board
-            board[piece.pieceX, piece.pieceY] = piece.pieceValue;
+            // method to add a piece to the board
+            board[piece.pieceX, piece.pieceY] = piece;
         }
-        public static void removePiece(Piece piece)
+
+        //support to use foreach loop on chessboard
+        public IEnumerator GetEnumerator()
         {
-            //method to remove a piece from the board
-            board[piece.pieceX, piece.pieceY] = 0;
+            foreach (var piece in board)
+            {
+                yield return piece;
+            }
         }
-        public static void movePiece(Piece piece, int x, int y)
+
+        public void movePiece(Piece piece, int x, int y)
         {
-            //method to move a piece on the board
-            removePiece(piece);
+            // method to move a piece on the board
+            board[piece.pieceX, piece.pieceY] = null;
+            
             piece.pieceX = x;
             piece.pieceY = y;
-            placePiece(piece);
+            board[piece.pieceX, piece.pieceY] = piece;
         }
-        //get length of x function here
+
+        // get length of x function here
         public int getLengthX()
         {
             return board.GetLength(0);
         }
-        //get length of y function here
+
+        // get length of y function here
         public int getLengthY()
         {
             return board.GetLength(1);
         }
-        //array2D[x, y]
-        public int this[int x, int y]
+
+        // array2D[x, y]
+        public Piece this[int x, int y]
         {
-            get { return board[x, y]; }
-            set { board[x, y] = value; }
+            get
+            {
+                if (x >= 0 && x < board.GetLength(0) && y >= 0 && y < board.GetLength(1))
+                {
+                    return board[x, y];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (x >= 0 && x < board.GetLength(0) && y >= 0 && y < board.GetLength(1))
+                {
+                    board[x, y] = value;
+                }
+                else
+                {
+                    
+                }
+            }
         }
-        //class constructor here
+
+
+        // class constructor here
         public ChessBoard()
         {
-            //initialize the board
+            // initialize the board
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    board[i, j] = 0;
+                    board[i, j] = null;
                 }
             }
         }
