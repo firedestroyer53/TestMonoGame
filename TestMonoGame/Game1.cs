@@ -20,6 +20,8 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch spriteBatch;
 
+    DebugTextWriter writer = new DebugTextWriter();
+
     Color white = Color.White;
     Color black = Color.Black;
 
@@ -43,25 +45,14 @@ public class Game1 : Game
         for (int i = 0; i < 8; i++)
         {
             // Create a new black pawn with the current pawn number and position.
-            Piece blackPawn = new(true, i, 7);
-
-            // Add the pawns to a list or array for later use.
-            // For example:
-            board.placePiece(blackPawn);
+            Pawn blackPawn = new(true, i, 7, board);
         }
         // Create eight white pawns.
         for (int i = 0; i < 8; i++)
         {
             // Create a new white pawn with the current pawn number and position.
-            Piece whitePawn = new(false, i, 2);
-
-            // Add the pawn to the list of white pawns.
-            board.placePiece(whitePawn);
+            Pawn whitePawn = new(false, i, 2, board);
         }
-
-
-
-
         base.Initialize();
     }
 
@@ -94,6 +85,7 @@ public class Game1 : Game
             {
                 // If there's no piece currently selected, check if there's a piece at the clicked cell and select it
                 Piece clickedPiece = board[cellX, cellY];
+
                 if (clickedPiece != null)
                 {
                     selectedPiece = clickedPiece;
@@ -103,8 +95,11 @@ public class Game1 : Game
             {
                 // If there's a piece already selected, move it to the clicked cell
                 try
-                {
-                    board.movePiece(selectedPiece, cellX, cellY);
+                {  
+                    if (selectedPiece.IsMoveValid(cellX, cellY))
+                    {
+                        board.movePiece(selectedPiece, cellX, cellY);
+                    }
                     selectedPiece = null; // Deselect the piece after it's been moved
                 }
                 catch (Exception ex)
