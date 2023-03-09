@@ -7,8 +7,7 @@ namespace TestMonoGame;
 
 public class Game1 : Game
 {
-    Texture2D whiteSquare;
-    Texture2D blackSquare;
+    Texture2D whiteSquareTexture;
     Texture2D whitePawnTexture;
     Texture2D blackPawnTexture;
 
@@ -23,6 +22,8 @@ public class Game1 : Game
     Color white = Color.White;
     Color black = Color.Black;
 
+    Color whiteSquareColor = Color.FromNonPremultiplied(235, 236, 208, 255);
+    Color blackSquareColor = Color.FromNonPremultiplied(119, 149, 86, 255);
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -36,26 +37,27 @@ public class Game1 : Game
     protected override void Initialize()
     {
         //setup blank board
-        
+
         // TODO: Add your initialization logic here
         for (int i = 0; i < 8; i++)
         {
             // Create a new black pawn with the current pawn number and position.
-            Piece whitePawn = new(true, i, i, 2);
+            Piece blackPawn = new(true, i, 7);
 
             // Add the pawns to a list or array for later use.
             // For example:
-            board.placePiece(whitePawn);
+            board.placePiece(blackPawn);
         }
         // Create eight white pawns.
         for (int i = 0; i < 8; i++)
         {
             // Create a new white pawn with the current pawn number and position.
-            Piece blackPawn = new(false, i, i, 7);
+            Piece whitePawn = new(false, i, 2);
 
             // Add the pawn to the list of white pawns.
-            board.placePiece(blackPawn);
+            board.placePiece(whitePawn);
         }
+
 
 
 
@@ -68,8 +70,7 @@ public class Game1 : Game
 
         // TODO: use this.Content to load your game content here
 
-        whiteSquare = Content.Load<Texture2D>("WhiteSquare");
-        blackSquare = Content.Load<Texture2D>("BlackSquare");
+        whiteSquareTexture = Content.Load<Texture2D>("WhiteSquare");
         whitePawnTexture = Content.Load<Texture2D>("WhitePawn");
         blackPawnTexture = Content.Load<Texture2D>("BlackPawn");
     }
@@ -77,6 +78,7 @@ public class Game1 : Game
     protected override void Update(GameTime gameTime)
     {
         MouseState mstate = Mouse.GetState();
+
         int cellX;
         int cellY;
 
@@ -125,7 +127,7 @@ public class Game1 : Game
 
         spriteBatch.Begin();
 
-        
+
         int cellSize = 64;
 
         for (int x = 0; x < board.getLengthX(); x++)
@@ -137,11 +139,11 @@ public class Game1 : Game
                 int yPos = y * cellSize;
 
                 // Determine the color of the cell based on its position.
-                Color cellColor = ((x + y) % 2 == 0) ? Color.AliceBlue : Color.Chocolate;
+                Color cellColor = ((x + y) % 2 == 0) ? whiteSquareColor : blackSquareColor;
 
                 // Draw the cell with a colored border.
                 spriteBatch.Draw(
-                    texture: whiteSquare,
+                    texture: whiteSquareTexture,
                     destinationRectangle: new Rectangle(xPos, yPos, cellSize, cellSize),
                     sourceRectangle: null,
                     color: cellColor,
@@ -159,7 +161,7 @@ public class Game1 : Game
         {
             if (piece != null)
             {
-                
+
                 if (piece.isWhite)
                 {
                     spriteBatch.Draw(
@@ -177,7 +179,7 @@ public class Game1 : Game
                 else
                 {
                     spriteBatch.Draw(texture: blackPawnTexture,
-                                 destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY-1) * cellSize, cellSize, cellSize),
+                                 destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
                                  sourceRectangle: null,
                                  color: black,
                                  rotation: 0f,
@@ -186,7 +188,7 @@ public class Game1 : Game
                                  layerDepth: 0f);
                 }
             }
-            
+
 
         }
 

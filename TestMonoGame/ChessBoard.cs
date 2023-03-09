@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 namespace TestMonoGame
 {
@@ -7,7 +6,7 @@ namespace TestMonoGame
     {
         // class for a chessboard
         public static Piece[,] board = new Piece[8, 8];
-        
+
         public void placePiece(Piece piece)
         {
             // method to add a piece to the board
@@ -27,7 +26,7 @@ namespace TestMonoGame
         {
             // method to move a piece on the board
             board[piece.pieceX, piece.pieceY] = null;
-            
+
             piece.pieceX = x;
             piece.pieceY = y;
             board[piece.pieceX, piece.pieceY] = piece;
@@ -67,7 +66,7 @@ namespace TestMonoGame
                 }
                 else
                 {
-                    
+
                 }
             }
         }
