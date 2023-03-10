@@ -107,41 +107,45 @@ namespace ChessTest
                 HasMoved = true;
                 return true;
             }
-            else if (dy == -2 && HasMoved == false && newX == pieceX && board[newX, newY] == null) // white pawn moving two squares forward from starting position
+            if (dy == -2 && HasMoved == false && newX == pieceX && board[newX, newY] == null) // white pawn moving two squares forward from starting position
             {
                 HasMoved = true;
                 return true;
             }
-            else if (dy == 1 && newX == pieceX && board[newX, newY] == null) // black pawn moving one square forward
+            if (dy == 1 && newX == pieceX && board[newX, newY] == null) // black pawn moving one square forward
             {
                 HasMoved = true;
                 return true;
             }
-            else if (dy == 2 && HasMoved == false && newX == pieceX && board[newX, newY] == null) // black pawn moving two squares forward from starting position
+            if (dy == 2 && HasMoved == false && newX == pieceX && board[newX, newY] == null) // black pawn moving two squares forward from starting position
             {
                 HasMoved = true;
                 return true;
             }
-            else if (dx == 1 && dy == -1 && board[newX, newY].isWhite != isWhite) // white pawn capturing to the right
+            if (board[newX, newY] != null)
             {
-                HasMoved = true;
-                return true;
+                if (dx == 1 && dy == -1 && board[newX, newY].isWhite != isWhite) // white pawn capturing to the right
+                {
+                    HasMoved = true;
+                    return true;
+                }
+                if (dx == -1 && dy == -1 && board[newX, newY].isWhite != isWhite) // white pawn capturing to the left
+                {
+                    HasMoved = true;
+                    return true;
+                }
+                if (dx == 1 && dy == 1 && board[newX, newY].isWhite != isWhite) // black pawn capturing to the right
+                {
+                    HasMoved = true;
+                    return true;
+                }
+                if (dx == -1 && dy == 1 && board[newX, newY].isWhite != isWhite) // black pawn capturing to the left
+                {
+                    HasMoved = true;
+                    return true;
+                }
             }
-            else if (dx == -1 && dy == -1 && board[newX, newY].isWhite != isWhite) // white pawn capturing to the left
-            {
-                HasMoved = true;
-                return true;
-            }
-            else if (dx == 1 && dy == 1 && board[newX, newY].isWhite != isWhite) // black pawn capturing to the right
-            {
-                HasMoved = true;
-                return true;
-            }
-            else if (dx == -1 && dy == 1 && board[newX, newY].isWhite != isWhite) // black pawn capturing to the left
-            {
-                HasMoved = true;
-                return true;
-            }
+            
             return false;
         }
     }
