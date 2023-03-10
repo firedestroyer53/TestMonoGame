@@ -10,6 +10,7 @@ namespace ChessTest
         public void placePiece(Piece piece)
         {
             // method to add a piece to the board
+
             board[piece.pieceX, piece.pieceY] = piece;
         }
 

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 
+
 namespace ChessTest;
 
 public class Game1 : Game
@@ -59,14 +60,31 @@ public class Game1 : Game
         for (int i = 0; i < 8; i++)
         {
             // Create a new black pawn with the current pawn number and position.
-            Pawn blackPawn = new(true, i, 7, board);
+            Pawn whitePawn = new(true, i, 6, board);
         }
         // Create eight white pawns.
         for (int i = 0; i < 8; i++)
         {
             // Create a new white pawn with the current pawn number and position.
-            Pawn whitePawn = new(false, i, 2, board);
+            Pawn blackPawn = new(false, i, 1, board);
         }
+        //initialize the rest of the pieces
+        King whiteKing = new(true, 4, 7, board);
+        King blackKing = new(false, 4, 0, board);
+        Queen whiteQueen = new(true, 3, 7, board);
+        Queen blackQueen = new(false, 3, 0, board); 
+        Rook whiteRook1 = new(true, 0, 7, board);
+        Rook whiteRook2 = new(true, 7, 7, board);
+        Rook blackRook1 = new(false, 0, 0, board);
+        Rook blackRook2 = new(false, 7, 0, board);
+        Knight whiteKnight1 = new(true, 1, 7, board);
+        Knight whiteKnight2 = new(true, 6, 7, board);
+        Knight blackKnight1 = new(false, 1, 0, board);
+        Knight blackKnight2 = new(false, 6, 0, board);
+        Bishop whiteBishop1 = new(true, 2, 7, board);
+        Bishop whiteBishop2 = new(true, 5, 7, board);
+        Bishop blackBishop1 = new(false, 2, 0, board);
+        Bishop blackBishop2 = new(false, 5, 0, board);
         
 
         base.Initialize();
@@ -105,7 +123,7 @@ public class Game1 : Game
         {
             // Get the position of the cell that the mouse is currently on
             cellX = mstate.X / 64;
-            cellY = (mstate.Y / 64) + 1;
+            cellY = (mstate.Y / 64);
 
 
             if (selectedPiece == null)
@@ -200,7 +218,7 @@ public class Game1 : Game
                         case PieceType.Pawn:
                             spriteBatch.Draw(
                                 texture: whitePawnTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -212,7 +230,7 @@ public class Game1 : Game
                         case PieceType.King:
                             spriteBatch.Draw(
                                 texture: whiteKingTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -224,7 +242,7 @@ public class Game1 : Game
                         case PieceType.Queen:
                             spriteBatch.Draw(
                                 texture: whiteQueenTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -236,7 +254,7 @@ public class Game1 : Game
                         case PieceType.Bishop:
                             spriteBatch.Draw(
                                 texture: whiteBishopTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -248,7 +266,7 @@ public class Game1 : Game
                         case PieceType.Knight:
                             spriteBatch.Draw(
                                 texture: whiteKnightTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -260,7 +278,7 @@ public class Game1 : Game
                         case PieceType.Rook:
                             spriteBatch.Draw(
                                 texture: whiteRookTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -280,7 +298,7 @@ public class Game1 : Game
                         case PieceType.Pawn:
                             spriteBatch.Draw(
                                 texture: blackPawnTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -292,7 +310,7 @@ public class Game1 : Game
                         case PieceType.King:
                             spriteBatch.Draw(
                                 texture: blackKingTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -304,7 +322,7 @@ public class Game1 : Game
                         case PieceType.Queen:
                             spriteBatch.Draw(
                                 texture: blackQueenTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -316,7 +334,7 @@ public class Game1 : Game
                         case PieceType.Bishop:
                             spriteBatch.Draw(
                                 texture: blackBishopTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -328,7 +346,7 @@ public class Game1 : Game
                         case PieceType.Knight:
                             spriteBatch.Draw(
                                 texture: blackKnightTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
@@ -340,7 +358,7 @@ public class Game1 : Game
                         case PieceType.Rook:
                             spriteBatch.Draw(
                                 texture: blackRookTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,
                                 rotation: 0f,
