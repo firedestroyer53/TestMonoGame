@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace TestMonoGame
+namespace ChessTest
 {
     public class ChessBoard : IEnumerable
     {

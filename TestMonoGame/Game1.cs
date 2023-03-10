@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 
-namespace TestMonoGame;
+namespace ChessTest;
 
 public class Game1 : Game
 {
@@ -257,6 +257,18 @@ public class Game1 : Game
                                 layerDepth: 0f
                             );
                             break;
+                        case PieceType.Rook:
+                            spriteBatch.Draw(
+                                texture: whiteRookTexture,
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                sourceRectangle: null,
+                                color: white,
+                                rotation: 0f,
+                                origin: Vector2.Zero,
+                                effects: SpriteEffects.None,
+                                layerDepth: 0f
+                            );
+                            break;
                     }
                     
 
@@ -316,6 +328,18 @@ public class Game1 : Game
                         case PieceType.Knight:
                             spriteBatch.Draw(
                                 texture: blackKnightTexture,
+                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
+                                sourceRectangle: null,
+                                color: white,
+                                rotation: 0f,
+                                origin: Vector2.Zero,
+                                effects: SpriteEffects.None,
+                                layerDepth: 0f
+                            );
+                            break;
+                        case PieceType.Rook:
+                            spriteBatch.Draw(
+                                texture: blackRookTexture,
                                 destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY - 1) * cellSize, cellSize, cellSize),
                                 sourceRectangle: null,
                                 color: white,

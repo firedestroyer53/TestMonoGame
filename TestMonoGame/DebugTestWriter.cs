@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace TestMonoGame
+namespace ChessTest
 {
     public class DebugTextWriter : TextWriter
     {
