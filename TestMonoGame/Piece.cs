@@ -20,9 +20,11 @@ namespace ChessTest
         public bool isWhite;
         public int pieceX;
         public int pieceY;
+        public bool JustMoved;
         //Position vector of X and Y
         public Vector2 position;
         private ChessBoard board;
+        
 
         // getPiece method which returns what type of piece it is
         public abstract PieceType GetPieceType();
@@ -37,6 +39,7 @@ namespace ChessTest
             this.position = new Vector2(x, y);
             this.board = board;
             this.board.placePiece(this);
+            this.JustMoved = false;
         }
 
         // Get bounds method
@@ -49,7 +52,7 @@ namespace ChessTest
         public bool IsMoveValid(int newX, int newY)
         {
             // Check if the move is within the bounds of the board
-            if (newX < 0 || newX > 7 || newY < 0 || newY > 7)
+            if (newX < 0 || newX > 8 || newY < 0 || newY > 8)
             {
                 return false;
             }
@@ -62,20 +65,24 @@ namespace ChessTest
             }
 
             // Check if the move goes through any pieces on the board
-            int dx = newX - pieceX;
-            int dy = newY - pieceY;
-            int steps = Math.Max(Math.Abs(dx), Math.Abs(dy));
-            int xStep = dx / steps;
-            int yStep = dy / steps;
-            for (int i = 1; i < steps; i++)
+            if(GetPieceType() != PieceType.Knight)
             {
-                int x = pieceX + i * xStep;
-                int y = pieceY + i * yStep;
-                if (board[x, y] != null)
+                int dx = newX - pieceX;
+                int dy = newY - pieceY;
+                int steps = Math.Max(Math.Abs(dx), Math.Abs(dy));
+                int xStep = dx / steps;
+                int yStep = dy / steps;
+                for (int i = 1; i < steps; i++)
                 {
-                    return false;
+                    int x = pieceX + i * xStep;
+                    int y = pieceY + i * yStep;
+                    if (board[x, y] != null)
+                    {
+                        return false;
+                    }
                 }
             }
+            
 
             // Call the abstract IsValidMove method in the derived classes
             return IsValidMove(newX, newY, board);
@@ -87,13 +94,13 @@ namespace ChessTest
     public class Pawn : Piece
     {
         public bool HasMoved { get; set; }
-
         public override PieceType GetPieceType()
         {
             return PieceType.Pawn;
         }
         public Pawn(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
         {
+            JustMoved = false;
             HasMoved = false;
         }
 
@@ -102,6 +109,12 @@ namespace ChessTest
             // Check if the move is one square forward, or two squares forward if the pawn has not moved yet
             int dy = newY - pieceY;
             int dx = newX - pieceX;
+
+
+            
+
+
+
             if (dy == -1 && newX == pieceX && board[newX, newY] == null) // white pawn moving one square forward
             {
                 HasMoved = true;
@@ -109,6 +122,7 @@ namespace ChessTest
             }
             if (dy == -2 && HasMoved == false && newX == pieceX && board[newX, newY] == null) // white pawn moving two squares forward from starting position
             {
+                JustMoved = true;
                 HasMoved = true;
                 return true;
             }
@@ -119,10 +133,11 @@ namespace ChessTest
             }
             if (dy == 2 && HasMoved == false && newX == pieceX && board[newX, newY] == null) // black pawn moving two squares forward from starting position
             {
+                JustMoved = true;
                 HasMoved = true;
                 return true;
             }
-            if (board[newX, newY] != null)
+            if (board[newX,newY] != null)
             {
                 if (dx == 1 && dy == -1 && board[newX, newY].isWhite != isWhite) // white pawn capturing to the right
                 {
@@ -145,7 +160,17 @@ namespace ChessTest
                     return true;
                 }
             }
-            
+            if (board[newX, newY - 1] != null && board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved == true)
+            {
+                board[newX, newY - 1] = null;
+                return true;
+            }
+            if (board[newX, newY + 1] != null && board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved == true)
+            {
+                board[newX, newY + 1] = null;
+                return true;
+            }
+
             return false;
         }
     }
