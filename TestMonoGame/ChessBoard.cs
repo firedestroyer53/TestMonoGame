@@ -6,6 +6,7 @@ namespace ChessTest
     {
         // class for a chessboard
         public static Piece[,] board = new Piece[8, 8];
+        public Piece lastMoved;
 
         public void placePiece(Piece piece)
         {
@@ -85,5 +86,10 @@ namespace ChessTest
                 }
             }
         }
+        public Piece lastMovedPiece()
+        {
+            return lastMoved;
+        }
+
     }
 }

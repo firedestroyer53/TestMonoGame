@@ -109,12 +109,6 @@ namespace ChessTest
             // Check if the move is one square forward, or two squares forward if the pawn has not moved yet
             int dy = newY - pieceY;
             int dx = newX - pieceX;
-
-
-            
-
-
-
             if (dy == -1 && newX == pieceX && board[newX, newY] == null) // white pawn moving one square forward
             {
                 HasMoved = true;
@@ -160,14 +154,16 @@ namespace ChessTest
                     return true;
                 }
             }
-            if (board[newX, newY - 1] != null && board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved == true)
+            if (board[newX, newY - 1] != null && board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved == true && board.lastMoved == board[newX , newY-1]) // google en passant
             {
                 board[newX, newY - 1] = null;
+                
                 return true;
             }
-            if (board[newX, newY + 1] != null && board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved == true)
+            if (board[newX, newY + 1] != null && board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved == true && board.lastMoved == board[newX, newY + 1]) // holy hell
             {
                 board[newX, newY + 1] = null;
+                
                 return true;
             }
 
@@ -191,6 +187,9 @@ namespace ChessTest
             return Math.Abs(newX - pieceX) <= 1 && Math.Abs(newY - pieceY) <= 1;
         }
     }
+
+    
+
 
     public class Queen : Piece
     {

@@ -1,47 +1,46 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-
 
 namespace ChessTest;
 
 public class Game1 : Game
 {
-    Texture2D whiteSquareTexture;
-    Texture2D whitePawnTexture;
-    Texture2D blackPawnTexture;
-    Texture2D whiteKingTexture;
-    Texture2D blackKingTexture;
-    Texture2D whiteQueenTexture;
-    Texture2D blackQueenTexture;
-    Texture2D whiteBishopTexture;
-    Texture2D blackBishopTexture;
-    Texture2D whiteKnightTexture;
-    Texture2D blackKnightTexture;
-    Texture2D whiteRookTexture;
-    Texture2D blackRookTexture;
+    private readonly GraphicsDeviceManager _graphics;
+    private Color black = Color.Black;
+    private Texture2D blackBishopTexture;
+    private Texture2D blackKingTexture;
+    private Texture2D blackKnightTexture;
+    private Texture2D blackPawnTexture;
+    private Texture2D blackQueenTexture;
+    private Texture2D blackRookTexture;
+    private readonly Color blackSquareColor = Color.FromNonPremultiplied(119, 149, 86, 255);
+
+    private readonly ChessBoard board = new();
 
 
-    Piece selectedPiece = null;
-    private bool wasLeftButtonPressed = false;
-    public List<Rectangle> validMoves = new List<Rectangle>();
-
-    public bool turn = true;
-
-    ChessBoard board = new ChessBoard();
-
-    private GraphicsDeviceManager _graphics;
+    private Piece selectedPiece;
     private SpriteBatch spriteBatch;
 
-    DebugTextWriter writer = new DebugTextWriter();
+    public bool turn = true;
+    public List<Rectangle> validMoves = new();
+    private bool wasLeftButtonPressed;
 
-    Color white = Color.White;
-    Color black = Color.Black;
+    private readonly Color white = Color.White;
+    private Texture2D whiteBishopTexture;
+    private Texture2D whiteKingTexture;
+    private Texture2D whiteKnightTexture;
+    private Texture2D whitePawnTexture;
+    private Texture2D whiteQueenTexture;
+    private Texture2D whiteRookTexture;
 
-    Color whiteSquareColor = Color.FromNonPremultiplied(235, 236, 208, 255);
-    Color blackSquareColor = Color.FromNonPremultiplied(119, 149, 86, 255);
+    private readonly Color whiteSquareColor = Color.FromNonPremultiplied(235, 236, 208, 255);
+    private Texture2D whiteSquareTexture;
+
+    private DebugTextWriter writer = new();
+
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -57,22 +56,24 @@ public class Game1 : Game
         //setup blank board
 
         // TODO: Add your initialization logic here
-        for (int i = 0; i < 8; i++)
+        for (var i = 0; i < 8; i++)
         {
             // Create a new black pawn with the current pawn number and position.
             Pawn whitePawn = new(true, i, 6, board);
         }
+
         // Create eight white pawns.
-        for (int i = 0; i < 8; i++)
+        for (var i = 0; i < 8; i++)
         {
             // Create a new white pawn with the current pawn number and position.
             Pawn blackPawn = new(false, i, 1, board);
         }
+
         //initialize the rest of the pieces
         King whiteKing = new(true, 4, 7, board);
         King blackKing = new(false, 4, 0, board);
         Queen whiteQueen = new(true, 3, 7, board);
-        Queen blackQueen = new(false, 3, 0, board); 
+        Queen blackQueen = new(false, 3, 0, board);
         Rook whiteRook1 = new(true, 0, 7, board);
         Rook whiteRook2 = new(true, 7, 7, board);
         Rook blackRook1 = new(false, 0, 0, board);
@@ -85,7 +86,7 @@ public class Game1 : Game
         Bishop whiteBishop2 = new(true, 5, 7, board);
         Bishop blackBishop1 = new(false, 2, 0, board);
         Bishop blackBishop2 = new(false, 5, 0, board);
-        
+
 
         base.Initialize();
     }
@@ -109,12 +110,11 @@ public class Game1 : Game
         blackKnightTexture = Content.Load<Texture2D>("BlackKnight");
         whiteRookTexture = Content.Load<Texture2D>("WhiteRook");
         blackRookTexture = Content.Load<Texture2D>("BlackRook");
-        
     }
 
     protected override void Update(GameTime gameTime)
     {
-        MouseState mstate = Mouse.GetState();
+        var mstate = Mouse.GetState();
 
         int cellX;
         int cellY;
@@ -123,35 +123,29 @@ public class Game1 : Game
         {
             // Get the position of the cell that the mouse is currently on
             cellX = mstate.X / 64;
-            cellY = (mstate.Y / 64);
+            cellY = mstate.Y / 64;
 
 
             if (selectedPiece == null)
             {
                 // If there's no piece currently selected, check if there's a piece at the clicked cell and select it
-                Piece clickedPiece = board[cellX, cellY];
+                var clickedPiece = board[cellX, cellY];
 
-                if (clickedPiece != null)
-                {
-                    selectedPiece = clickedPiece;
-                }
-
+                if (clickedPiece != null) selectedPiece = clickedPiece;
             }
             else
             {
                 // If there's a piece already selected, move it to the clicked cell
                 try
                 {
-                    if(turn == selectedPiece.isWhite)
-                    {
+                    if (turn == selectedPiece.isWhite)
                         if (selectedPiece.IsMoveValid(cellX, cellY))
                         {
                             board.movePiece(selectedPiece, cellX, cellY);
                             turn = !turn;
+                            board.lastMoved = selectedPiece;
                         }
-                        
-                    }
-                    
+
                     selectedPiece = null; // Deselect the piece after it's been moved
                 }
                 catch (Exception ex)
@@ -159,14 +153,12 @@ public class Game1 : Game
                     Console.WriteLine(ex.Message);
                 }
             }
-
         }
+
         wasLeftButtonPressed = mstate.LeftButton == ButtonState.Pressed;
 
         base.Update(gameTime);
     }
-
-
 
 
     protected override void Draw(GameTime gameTime)
@@ -176,207 +168,193 @@ public class Game1 : Game
         spriteBatch.Begin();
 
 
-        int cellSize = 64;
+        var cellSize = 64;
 
-        for (int x = 0; x < board.getLengthX(); x++)
+        for (var x = 0; x < board.getLengthX(); x++)
+        for (var y = 0; y < board.getLengthY(); y++)
         {
-            for (int y = 0; y < board.getLengthY(); y++)
-            {
-                // Calculate the position of the cell based on its x and y index.
-                int xPos = x * cellSize;
-                int yPos = y * cellSize;
+            // Calculate the position of the cell based on its x and y index.
+            var xPos = x * cellSize;
+            var yPos = y * cellSize;
 
-                // Determine the color of the cell based on its position.
-                Color cellColor = ((x + y) % 2 == 0) ? whiteSquareColor : blackSquareColor;
+            // Determine the color of the cell based on its position.
+            var cellColor = (x + y) % 2 == 0 ? whiteSquareColor : blackSquareColor;
 
-                // Draw the cell with a colored border.
-                spriteBatch.Draw(
-                    texture: whiteSquareTexture,
-                    destinationRectangle: new Rectangle(xPos, yPos, cellSize, cellSize),
-                    sourceRectangle: null,
-                    color: cellColor,
-                    rotation: 0f,
-                    origin: Vector2.Zero,
-                    effects: SpriteEffects.None,
-                    layerDepth: 0f
-                );
-            }
+            // Draw the cell with a colored border.
+            spriteBatch.Draw(
+                whiteSquareTexture,
+                new Rectangle(xPos, yPos, cellSize, cellSize),
+                null,
+                cellColor,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0f
+            );
         }
 
 
         //draw the pawns onto the screen
         foreach (Piece piece in board)
-        {
             if (piece != null)
             {
-                PieceType pieceType = piece.GetPieceType();
+                var pieceType = piece.GetPieceType();
 
                 if (piece.isWhite)
-                {
                     switch (pieceType)
                     {
                         case PieceType.Pawn:
                             spriteBatch.Draw(
-                                texture: whitePawnTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                whitePawnTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.King:
                             spriteBatch.Draw(
-                                texture: whiteKingTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                whiteKingTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.Queen:
                             spriteBatch.Draw(
-                                texture: whiteQueenTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                whiteQueenTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.Bishop:
                             spriteBatch.Draw(
-                                texture: whiteBishopTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                whiteBishopTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.Knight:
                             spriteBatch.Draw(
-                                texture: whiteKnightTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                whiteKnightTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.Rook:
                             spriteBatch.Draw(
-                                texture: whiteRookTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                whiteRookTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                     }
-                    
-
-                }
                 else
-                {
                     switch (pieceType)
                     {
                         case PieceType.Pawn:
                             spriteBatch.Draw(
-                                texture: blackPawnTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                blackPawnTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.King:
                             spriteBatch.Draw(
-                                texture: blackKingTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                blackKingTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.Queen:
                             spriteBatch.Draw(
-                                texture: blackQueenTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                blackQueenTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.Bishop:
                             spriteBatch.Draw(
-                                texture: blackBishopTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                blackBishopTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.Knight:
                             spriteBatch.Draw(
-                                texture: blackKnightTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                blackKnightTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                         case PieceType.Rook:
                             spriteBatch.Draw(
-                                texture: blackRookTexture,
-                                destinationRectangle: new Rectangle((piece.pieceX) * cellSize, (piece.pieceY) * cellSize, cellSize, cellSize),
-                                sourceRectangle: null,
-                                color: white,
-                                rotation: 0f,
-                                origin: Vector2.Zero,
-                                effects: SpriteEffects.None,
-                                layerDepth: 0f
+                                blackRookTexture,
+                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
                             );
                             break;
                     }
-                }
             }
 
-
-        }
-        foreach (Rectangle rect in validMoves)
-        {
-            spriteBatch.Draw(whiteSquareTexture, rect, Color.Red);
-        }
+        foreach (var rect in validMoves) spriteBatch.Draw(whiteSquareTexture, rect, Color.Red);
 
 
         spriteBatch.End();
