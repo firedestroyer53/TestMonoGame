@@ -180,7 +180,7 @@ public class Game1 : Game
         }
 
 
-        //draw the pawns onto the screen
+        //draw the pieces onto the screen
         foreach (Piece piece in board)
             if (piece != null)
             {
@@ -261,6 +261,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
+
                     }
                 else
                     switch (pieceType)
@@ -337,6 +338,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
+
                     }
             }
 
