@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -8,84 +7,77 @@ namespace ChessTest;
 
 public class Game1 : Game
 {
-    private readonly GraphicsDeviceManager _graphics;
-    private Color black = Color.Black;
     private Texture2D blackBishopTexture;
     private Texture2D blackKingTexture;
     private Texture2D blackKnightTexture;
     private Texture2D blackPawnTexture;
     private Texture2D blackQueenTexture;
     private Texture2D blackRookTexture;
-    private readonly Color blackSquareColor = Color.FromNonPremultiplied(119, 149, 86, 255);
-
-    private readonly ChessBoard board = new();
-
-
-    private Piece selectedPiece;
-    private SpriteBatch spriteBatch;
-
-    public bool turn = true;
-    public List<Rectangle> validMoves = new();
-    private bool wasLeftButtonPressed;
-
-    private readonly Color white = Color.White;
     private Texture2D whiteBishopTexture;
     private Texture2D whiteKingTexture;
     private Texture2D whiteKnightTexture;
     private Texture2D whitePawnTexture;
     private Texture2D whiteQueenTexture;
     private Texture2D whiteRookTexture;
-
+    
+    private readonly Color white = Color.White;
+    private readonly Color blackSquareColor = Color.FromNonPremultiplied(119, 149, 86, 255);
     private readonly Color whiteSquareColor = Color.FromNonPremultiplied(235, 236, 208, 255);
-    private Texture2D whiteSquareTexture;
 
-    private DebugTextWriter writer = new();
+    private readonly ChessBoard board = new ChessBoard();
+    
+    private Texture2D defaultTexture;
+    
+    private Piece selectedPiece;
+    private SpriteBatch spriteBatch;
 
+    private bool turn = true;
+    private bool wasLeftButtonPressed;
+    
     public Game1()
     {
-        _graphics = new GraphicsDeviceManager(this);
+        var graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        _graphics.PreferredBackBufferWidth = 512;
-        _graphics.PreferredBackBufferHeight = 512;
-        _graphics.ApplyChanges();
+        graphics.PreferredBackBufferWidth = 512;
+        graphics.PreferredBackBufferHeight = 512;
+        graphics.ApplyChanges();
     }
 
     protected override void Initialize()
     {
         //setup blank board
 
-        // TODO: Add your initialization logic here
-        for (var i = 0; i < 8; i++)
-        {
-            // Create a new black pawn with the current pawn number and position.
-            Pawn whitePawn = new(true, i, 6, board);
-        }
-
-        // Create eight white pawns.
         for (var i = 0; i < 8; i++)
         {
             // Create a new white pawn with the current pawn number and position.
-            Pawn blackPawn = new(false, i, 1, board);
+            new Pawn(true, i, 6, board);
+        }
+
+        // Create eight black pawns.
+        for (var i = 0; i < 8; i++)
+        {
+            // Create a new black pawn with the current pawn number and position.
+            new Pawn(false, i, 1, board);
         }
 
         //initialize the rest of the pieces
-        King whiteKing = new(true, 4, 7, board);
-        King blackKing = new(false, 4, 0, board);
-        Queen whiteQueen = new(true, 3, 7, board);
-        Queen blackQueen = new(false, 3, 0, board);
-        Rook whiteRook1 = new(true, 0, 7, board);
-        Rook whiteRook2 = new(true, 7, 7, board);
-        Rook blackRook1 = new(false, 0, 0, board);
-        Rook blackRook2 = new(false, 7, 0, board);
-        Knight whiteKnight1 = new(true, 1, 7, board);
-        Knight whiteKnight2 = new(true, 6, 7, board);
-        Knight blackKnight1 = new(false, 1, 0, board);
-        Knight blackKnight2 = new(false, 6, 0, board);
-        Bishop whiteBishop1 = new(true, 2, 7, board);
-        Bishop whiteBishop2 = new(true, 5, 7, board);
-        Bishop blackBishop1 = new(false, 2, 0, board);
-        Bishop blackBishop2 = new(false, 5, 0, board);
+        new King(true, 4, 7, board);
+        new King(false, 4, 0, board);
+        new Queen(true, 3, 7, board);
+        new Queen(false, 3, 0, board);
+        new Rook(true, 0, 7, board);
+        new Rook(true, 7, 7, board);
+        new Rook(false, 0, 0, board);
+        new Rook(false, 7, 0, board);
+        new Knight(true, 1, 7, board);
+        new Knight(true, 6, 7, board);
+        new Knight(false, 1, 0, board);
+        new Knight(false, 6, 0, board);
+        new Bishop(true, 2, 7, board);
+        new Bishop(true, 5, 7, board);
+        new Bishop(false, 2, 0, board);
+        new Bishop(false, 5, 0, board);
 
 
         base.Initialize();
@@ -94,10 +86,8 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         spriteBatch = new SpriteBatch(GraphicsDevice);
-
-        // TODO: use this.Content to load your game content here
-
-        whiteSquareTexture = Content.Load<Texture2D>("WhiteSquare");
+        
+        defaultTexture = Content.Load<Texture2D>("WhiteSquare");
         whitePawnTexture = Content.Load<Texture2D>("WhitePawn");
         blackPawnTexture = Content.Load<Texture2D>("BlackPawn");
         whiteKingTexture = Content.Load<Texture2D>("WhiteKing");
@@ -114,16 +104,14 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
-        var mstate = Mouse.GetState();
+        var mouseState = Mouse.GetState();
 
-        int cellX;
-        int cellY;
 
-        if (mstate.LeftButton == ButtonState.Pressed && !wasLeftButtonPressed)
+        if (mouseState.LeftButton == ButtonState.Pressed && !wasLeftButtonPressed)
         {
             // Get the position of the cell that the mouse is currently on
-            cellX = mstate.X / 64;
-            cellY = mstate.Y / 64;
+            var cellX = mouseState.X / 64;
+            var cellY = mouseState.Y / 64;
 
 
             if (selectedPiece == null)
@@ -138,14 +126,12 @@ public class Game1 : Game
                 // If there's a piece already selected, move it to the clicked cell
                 try
                 {
-                    if (turn == selectedPiece.isWhite)
+                    if (turn == selectedPiece.IsWhite)
                         if (selectedPiece.IsMoveValid(cellX, cellY))
                         {
-                            board.movePiece(selectedPiece, cellX, cellY);
+                            ChessBoard.MovePiece(selectedPiece, cellX, cellY);
                             turn = !turn;
-                            board.lastMoved = selectedPiece;
                         }
-
                     selectedPiece = null; // Deselect the piece after it's been moved
                 }
                 catch (Exception ex)
@@ -155,7 +141,7 @@ public class Game1 : Game
             }
         }
 
-        wasLeftButtonPressed = mstate.LeftButton == ButtonState.Pressed;
+        wasLeftButtonPressed = mouseState.LeftButton == ButtonState.Pressed;
 
         base.Update(gameTime);
     }
@@ -170,8 +156,8 @@ public class Game1 : Game
 
         var cellSize = 64;
 
-        for (var x = 0; x < board.getLengthX(); x++)
-        for (var y = 0; y < board.getLengthY(); y++)
+        for (var x = 0; x < ChessBoard.GetLengthX(); x++)
+        for (var y = 0; y < ChessBoard.GetLengthY(); y++)
         {
             // Calculate the position of the cell based on its x and y index.
             var xPos = x * cellSize;
@@ -182,7 +168,7 @@ public class Game1 : Game
 
             // Draw the cell with a colored border.
             spriteBatch.Draw(
-                whiteSquareTexture,
+                defaultTexture,
                 new Rectangle(xPos, yPos, cellSize, cellSize),
                 null,
                 cellColor,
@@ -200,13 +186,13 @@ public class Game1 : Game
             {
                 var pieceType = piece.GetPieceType();
 
-                if (piece.isWhite)
+                if (piece.IsWhite)
                     switch (pieceType)
                     {
                         case PieceType.Pawn:
                             spriteBatch.Draw(
                                 whitePawnTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -218,7 +204,7 @@ public class Game1 : Game
                         case PieceType.King:
                             spriteBatch.Draw(
                                 whiteKingTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -230,7 +216,7 @@ public class Game1 : Game
                         case PieceType.Queen:
                             spriteBatch.Draw(
                                 whiteQueenTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -242,7 +228,7 @@ public class Game1 : Game
                         case PieceType.Bishop:
                             spriteBatch.Draw(
                                 whiteBishopTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -254,7 +240,7 @@ public class Game1 : Game
                         case PieceType.Knight:
                             spriteBatch.Draw(
                                 whiteKnightTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -266,7 +252,7 @@ public class Game1 : Game
                         case PieceType.Rook:
                             spriteBatch.Draw(
                                 whiteRookTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -282,7 +268,7 @@ public class Game1 : Game
                         case PieceType.Pawn:
                             spriteBatch.Draw(
                                 blackPawnTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -294,7 +280,7 @@ public class Game1 : Game
                         case PieceType.King:
                             spriteBatch.Draw(
                                 blackKingTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -306,7 +292,7 @@ public class Game1 : Game
                         case PieceType.Queen:
                             spriteBatch.Draw(
                                 blackQueenTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -318,7 +304,7 @@ public class Game1 : Game
                         case PieceType.Bishop:
                             spriteBatch.Draw(
                                 blackBishopTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -330,7 +316,7 @@ public class Game1 : Game
                         case PieceType.Knight:
                             spriteBatch.Draw(
                                 blackKnightTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -342,7 +328,7 @@ public class Game1 : Game
                         case PieceType.Rook:
                             spriteBatch.Draw(
                                 blackRookTexture,
-                                new Rectangle(piece.pieceX * cellSize, piece.pieceY * cellSize, cellSize, cellSize),
+                                new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
                                 null,
                                 white,
                                 0f,
@@ -353,9 +339,6 @@ public class Game1 : Game
                             break;
                     }
             }
-
-        foreach (var rect in validMoves) spriteBatch.Draw(whiteSquareTexture, rect, Color.Red);
-
 
         spriteBatch.End();
         base.Draw(gameTime);
