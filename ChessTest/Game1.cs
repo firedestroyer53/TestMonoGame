@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace ChessTest;
 
@@ -19,13 +21,14 @@ public class Game1 : Game
     private Texture2D whitePawnTexture;
     private Texture2D whiteQueenTexture;
     private Texture2D whiteRookTexture;
-    
+    private readonly List<SoundEffect> soundEffects = new();
+
     private readonly Color white = Color.White;
     private readonly Color blackSquareColor = Color.FromNonPremultiplied(119, 149, 86, 255);
     private readonly Color whiteSquareColor = Color.FromNonPremultiplied(235, 236, 208, 255);
 
-    private readonly ChessBoard board = new ChessBoard();
-    
+    private readonly ChessBoard board = new();
+
     private Texture2D defaultTexture;
     
     private Piece selectedPiece;
@@ -62,24 +65,23 @@ public class Game1 : Game
         }
 
         //initialize the rest of the pieces
-        new King(true, 4, 7, board);
-        new King(false, 4, 0, board);
-        new Queen(true, 3, 7, board);
-        new Queen(false, 3, 0, board);
-        new Rook(true, 0, 7, board);
-        new Rook(true, 7, 7, board);
-        new Rook(false, 0, 0, board);
-        new Rook(false, 7, 0, board);
-        new Knight(true, 1, 7, board);
-        new Knight(true, 6, 7, board);
-        new Knight(false, 1, 0, board);
-        new Knight(false, 6, 0, board);
-        new Bishop(true, 2, 7, board);
-        new Bishop(true, 5, 7, board);
-        new Bishop(false, 2, 0, board);
-        new Bishop(false, 5, 0, board);
-
-
+        new King(true, 4, 7, board); //White King
+        new King(false, 4, 0, board); //Black King
+        new Queen(true, 3, 7, board); //White Queen
+        new Queen(false, 3, 0, board); //Black Queen
+        new Rook(true, 0, 7, board); //White Rook
+        new Rook(true, 7, 7, board); //White Rook
+        new Rook(false, 0, 0, board); //Black Rook
+        new Rook(false, 7, 0, board); //Black Rook
+        new Knight(true, 1, 7, board); //White Knight
+        new Knight(true, 6, 7, board); //White Knight
+        new Knight(false, 1, 0, board); //Black Knight
+        new Knight(false, 6, 0, board); //Black Knight
+        new Bishop(true, 2, 7, board); //White Bishop
+        new Bishop(true, 5, 7, board); //White Bishop
+        new Bishop(false, 2, 0, board); //Black Bishop
+        new Bishop(false, 5, 0, board); //Black Bishop
+        
         base.Initialize();
     }
 
@@ -100,6 +102,8 @@ public class Game1 : Game
         blackKnightTexture = Content.Load<Texture2D>("BlackKnight");
         whiteRookTexture = Content.Load<Texture2D>("WhiteRook");
         blackRookTexture = Content.Load<Texture2D>("BlackRook");
+        soundEffects.Add(Content.Load<SoundEffect>("MoveSound"));
+        soundEffects.Add(Content.Load<SoundEffect>("CaptureSound"));
     }
 
     protected override void Update(GameTime gameTime)
@@ -119,7 +123,7 @@ public class Game1 : Game
                 // If there's no piece currently selected, check if there's a piece at the clicked cell and select it
                 var clickedPiece = board[cellX, cellY];
 
-                if (clickedPiece != null) selectedPiece = clickedPiece;
+                selectedPiece = clickedPiece;
             }
             else
             {
@@ -129,10 +133,15 @@ public class Game1 : Game
                     if (turn == selectedPiece.IsWhite)
                         if (selectedPiece.IsMoveValid(cellX, cellY))
                         {
+                            if (board[cellX, cellY] != null)
+                                soundEffects[1].Play();
+                            else
+                                soundEffects[0].Play();
                             ChessBoard.MovePiece(selectedPiece, cellX, cellY);
                             turn = !turn;
                         }
                     selectedPiece = null; // Deselect the piece after it's been moved
+                    // possibleMoves.Clear();
                 }
                 catch (Exception ex)
                 {
@@ -145,17 +154,15 @@ public class Game1 : Game
 
         base.Update(gameTime);
     }
-
-
+    
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.White);
 
         spriteBatch.Begin();
-
-
-        var cellSize = 64;
-
+        
+        const int cellSize = 64;
+        
         for (var x = 0; x < ChessBoard.GetLengthX(); x++)
         for (var y = 0; y < ChessBoard.GetLengthY(); y++)
         {
@@ -261,7 +268,6 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-
                     }
                 else
                     switch (pieceType)
@@ -338,10 +344,11 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-
                     }
             }
 
+
+        
         spriteBatch.End();
         base.Draw(gameTime);
     }

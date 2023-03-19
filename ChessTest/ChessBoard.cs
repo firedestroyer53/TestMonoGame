@@ -8,7 +8,7 @@ public class ChessBoard : IEnumerable
     // class for a chessboard
     private static readonly Piece[,] Board = new Piece[8, 8];
 
-    public void PlacePiece(Piece piece)
+    public static void PlacePiece(Piece piece)
     {
         // method to add a piece to the board
 
@@ -65,8 +65,7 @@ public class ChessBoard : IEnumerable
             }
         }
     }
-
-
+    
     // class constructor here
     public ChessBoard()
     {

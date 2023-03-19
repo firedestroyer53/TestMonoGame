@@ -25,18 +25,6 @@
 /processorParam:TextureFormat=Color
 /build:ball.png
 
-#begin ball.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:ball.png
-
 #begin BlackBishop.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -72,18 +60,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:BlackKnight.png
-
-#begin BlackPawn.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:BlackPawn.png
 
 #begin BlackPawn.png
 /importer:TextureImporter
@@ -133,17 +109,17 @@
 /processorParam:TextureFormat=Color
 /build:BlackSquare.png
 
-#begin BlackSquare.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:BlackSquare.png
+#begin CaptureSound.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:CaptureSound.mp3
+
+#begin MoveSound.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:MoveSound.mp3
 
 #begin WhiteBishop.png
 /importer:TextureImporter
@@ -193,18 +169,6 @@
 /processorParam:TextureFormat=Color
 /build:WhitePawn.png
 
-#begin WhitePawn.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:WhitePawn.png
-
 #begin WhiteQueen.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -228,18 +192,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:WhiteRook.png
-
-#begin WhiteSquare.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:WhiteSquare.png
 
 #begin WhiteSquare.png
 /importer:TextureImporter
