@@ -14,6 +14,7 @@ public class DebugTextWriter : TextWriter
     //Required
     public override void Write(char value)
     {
+        // ReSharper disable once HeapView.BoxingAllocation
         Debug.Write(value);
     }
 

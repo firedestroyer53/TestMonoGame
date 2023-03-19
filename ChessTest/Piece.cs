@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using System;
 
 namespace ChessTest;
@@ -31,19 +30,15 @@ public abstract class Piece
     // Class constructor
     protected Piece(bool iswhite, int x, int y, ChessBoard board)
     {
-        this.IsWhite = iswhite;
-        this.PieceX = x;
-        this.PieceY = y;
+        IsWhite = iswhite;
+        PieceX = x;
+        PieceY = y;
         this.board = board;
         ChessBoard.PlacePiece(this);
-        this.JustMoved = false;
+        JustMoved = false;
     }
 
-    // Get bounds method
-    public Rectangle GetBounds()
-    {
-        return new Rectangle(PieceX, PieceY, 64, 64);
-    }
+
 
     protected abstract bool IsValidMove(int newX, int newY, ChessBoard board);
     public bool IsMoveValid(int newX, int newY)
@@ -162,16 +157,13 @@ public class Pawn : Piece
             return true;
         }
         //black pawn en passant
-        if (Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY - 1] != null &&
-            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved)
-        {
-            board[newX, newY - 1] = null;
-            HasMoved = true;
-            JustMoved = false;
-            return true;
-        }
-        return false;
-}
+        if (Math.Abs(dx) + Math.Abs(dy) != 2 || board[newX, newY] != null || board[newX, newY - 1] == null ||
+            board[newX, newY - 1].GetPieceType() != PieceType.Pawn || !board[newX, newY - 1].JustMoved) return false;
+        board[newX, newY - 1] = null;
+        HasMoved = true;
+        JustMoved = false;
+        return true;
+    }
 }
 
 public class King : Piece
@@ -257,10 +249,8 @@ public class Queen : Piece
 
 public class Rook : Piece
 {
-    public bool HasMoved;
     public Rook(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
     {
-        HasMoved = false;
     }
 
     public override PieceType GetPieceType()

@@ -52,10 +52,7 @@ public class ChessBoard : IEnumerable
             {
                 return Board[x, y];
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
         set
         {
