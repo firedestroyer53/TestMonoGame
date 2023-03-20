@@ -55,9 +55,10 @@ public abstract class Piece
         {
             return false;
         }
-
+        
         // Check if the move goes through any pieces on the board
         if (GetPieceType() == PieceType.Knight) return IsValidMove(newX, newY, board);
+        
         var dx = newX - PieceX;
         var dy = newY - PieceY;
         var steps = Math.Max(Math.Abs(dx), Math.Abs(dy));
@@ -168,10 +169,10 @@ public class Pawn : Piece
 
 public class King : Piece
 {
-    // private bool hasMoved;
+    private bool hasMoved;
     public King(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
     {
-        // hasMoved = false;
+        hasMoved = false;
     }
 
     public override PieceType GetPieceType()
@@ -181,50 +182,50 @@ public class King : Piece
 
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
     {
-        // //Check for castling
-        // if (!hasMoved && newX == PieceX + 2 && newY == PieceY && board[newX, newY] == null && board[newX - 1, newY] == null)
-        // {
-        //     if (board[newX + 1, newY] != null && board[newX + 1, newY].GetPieceType() == PieceType.Rook && board[newX + 1, newY].IsWhite == IsWhite)
-        //     {
-        //         board[newX - 1, newY] = board[newX + 1, newY];
-        //         board[newX + 1, newY] = null;
-        //         hasMoved = true;
-        //         return true;
-        //     }
-        // }
-        // if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null && board[newX + 1, newY] == null && board[newX + 2, newY] == null)
-        // {
-        //     if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook && board[newX - 2, newY].IsWhite == IsWhite)
-        //     {
-        //         board[newX + 1, newY] = board[newX - 2, newY];
-        //         board[newX - 2, newY] = null;
-        //         hasMoved = true;
-        //         return true;
-        //     }
-        // }
-        // // Queen side castling
-        // if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null && board[newX + 1, newY] == null && board[newX + 2, newY] == null)
-        // {
-        //     if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook && board[newX - 2, newY].IsWhite == IsWhite)
-        //     {
-        //         board[newX + 1, newY] = board[newX - 2, newY];
-        //         board[newX - 2, newY] = null;
-        //         hasMoved = true;
-        //         return true;
-        //     }
-        // }
-        // // Black queen side castling
-        // if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null && board[newX + 1, newY] == null && board[newX + 2, newY] == null)
-        // {
-        //     if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook && board[newX - 2, newY].IsWhite == IsWhite)
-        //     {
-        //         board[newX + 1, newY] = board[newX - 2, newY];
-        //         board[newX - 2, newY] = null;
-        //         hasMoved = true;
-        //         return true;
-        //     }
-        // }
-        // Check if the move is within one square in any direction
+        //Check for castling
+        if (!hasMoved && newX == PieceX + 2 && newY == PieceY && board[newX, newY] == null && board[newX - 1, newY] == null)
+        {
+            if (board[newX + 1, newY] != null && board[newX + 1, newY].GetPieceType() == PieceType.Rook && board[newX + 1, newY].IsWhite == IsWhite)
+            {
+                board[newX + 1, newY] = null;
+                new Rook(IsWhite, newX - 1, newY, board);
+                
+                hasMoved = true;
+                return true;
+            }
+        }
+        if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null && board[newX + 1, newY] == null && board[newX + 2, newY] == null)
+        {
+            if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook && board[newX - 2, newY].IsWhite == IsWhite)
+            {
+                board[newX - 2, newY] = null;
+                new Rook(IsWhite, newX + 1, newY, board);
+                hasMoved = true;
+                return true;
+            }
+        }
+        // Queen side castling
+        if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null && board[newX + 1, newY] == null && board[newX + 2, newY] == null)
+        {
+            if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook && board[newX - 2, newY].IsWhite == IsWhite)
+            {
+                board[newX + 1, newY] = board[newX - 2, newY];
+                board[newX - 2, newY] = null;
+                hasMoved = true;
+                return true;
+            }
+        }
+        // Black queen side castling
+        if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null && board[newX + 1, newY] == null && board[newX + 2, newY] == null)
+        {
+            if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook && board[newX - 2, newY].IsWhite == IsWhite)
+            {
+                board[newX + 1, newY] = board[newX - 2, newY];
+                board[newX - 2, newY] = null;
+                hasMoved = true;
+                return true;
+            }
+        }
         return Math.Abs(newX - PieceX) <= 1 && Math.Abs(newY - PieceY) <= 1;
     }
 }
