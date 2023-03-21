@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
+// ReSharper disable InconsistentNaming
 
 namespace ChessTest;
 
@@ -21,21 +22,25 @@ public class Game1 : Game
     private Texture2D whitePawnTexture;
     private Texture2D whiteQueenTexture;
     private Texture2D whiteRookTexture;
-    private readonly List<SoundEffect> soundEffects = new();
+    private Texture2D defaultTexture;
 
+    private readonly List<SoundEffect> soundEffects = new();
+    
     private readonly Color white = Color.White;
     private readonly Color blackSquareColor = Color.FromNonPremultiplied(119, 149, 86, 255);
     private readonly Color whiteSquareColor = Color.FromNonPremultiplied(235, 236, 208, 255);
 
     private readonly ChessBoard board = new();
-
-    private Texture2D defaultTexture;
     
+    private readonly List<Dictionary<Piece, Vector2>> validMoves = new();
+    private readonly List<Vector2> possibleMoves = new();
+    private readonly List<Vector2> highlightedSquares = new();
     private Piece selectedPiece;
     private SpriteBatch spriteBatch;
 
     private bool turn = true;
     private bool wasLeftButtonPressed;
+    private bool wasRightButtonPressed;
     
     public Game1()
     {
@@ -81,6 +86,21 @@ public class Game1 : Game
         new Bishop(true, 5, 7, board); //White Bishop
         new Bishop(false, 2, 0, board); //Black Bishop
         new Bishop(false, 5, 0, board); //Black Bishop
+
+        foreach (Piece piece in board)
+        {
+            if (piece == null) continue;
+            for(var x = 0; x<8; x++)
+            {
+                for(var y = 0; y<8; y++)
+                {
+                    if(piece.testIsMoveValid(x, y))
+                    {
+                        validMoves.Add(new Dictionary<Piece, Vector2> {{piece, new Vector2(x, y)}});
+                    }
+                }
+            }
+        }
         
         base.Initialize();
     }
@@ -109,21 +129,40 @@ public class Game1 : Game
     protected override void Update(GameTime gameTime)
     {
         var mouseState = Mouse.GetState();
-
+        var cellX = mouseState.X / 64;
+        var cellY = mouseState.Y / 64;
 
         if (mouseState.LeftButton == ButtonState.Pressed && !wasLeftButtonPressed)
         {
             // Get the position of the cell that the mouse is currently on
-            var cellX = mouseState.X / 64;
-            var cellY = mouseState.Y / 64;
+            highlightedSquares.Clear();
 
 
-            if (selectedPiece == null)
+            if (selectedPiece == null || !selectedPiece.testIsMoveValid(cellX, cellY))
             {
                 // If there's no piece currently selected, check if there's a piece at the clicked cell and select it
                 var clickedPiece = board[cellX, cellY];
-
+                if (clickedPiece == null || clickedPiece != selectedPiece)
+                {
+                    possibleMoves.Clear();
+                }
                 selectedPiece = clickedPiece;
+                // add possible moves for selected piece to possibleMoves
+                if (selectedPiece != null)
+                {
+                    for(var x = 0; x < 8; x++)
+                    {
+                        for(var y = 0; y < 8; y++)
+                        {
+                            if(selectedPiece.testIsMoveValid(x, y))
+                            {
+                                // check if already in possibleMoves
+                                if(!possibleMoves.Contains(new Vector2(x, y))) possibleMoves.Add(new Vector2(x, y));
+                            }
+                        }
+                    }
+                }
+                
             }
             else
             {
@@ -139,9 +178,25 @@ public class Game1 : Game
                                 soundEffects[0].Play();
                             ChessBoard.MovePiece(selectedPiece, cellX, cellY);
                             turn = !turn;
+                            validMoves.Clear();
+                            foreach(Piece piece in board)
+                            {
+                                if (piece == null) continue;
+                                for(var x = 0; x<8; x++)
+                                {
+                                    for(var y = 0; y<8; y++)
+                                    {
+                                        if(piece.testIsMoveValid(x, y))
+                                        {
+                                            validMoves.Add(new Dictionary<Piece, Vector2> {{piece, new Vector2(x, y)}});
+                                        }
+                                    }
+                                }
+                            }
                         }
                     selectedPiece = null; // Deselect the piece after it's been moved
-                    // possibleMoves.Clear();
+                    possibleMoves.Clear();
+                    validMoves.Clear();
                 }
                 catch (Exception ex)
                 {
@@ -149,8 +204,14 @@ public class Game1 : Game
                 }
             }
         }
+        if (mouseState.RightButton == ButtonState.Pressed && !wasRightButtonPressed)
+        {
+            // Check if already highlighted before adding
+            if (!highlightedSquares.Contains(new Vector2(cellX, cellY))) highlightedSquares.Add(new Vector2(cellX, cellY));
+        }
 
         wasLeftButtonPressed = mouseState.LeftButton == ButtonState.Pressed;
+        wasRightButtonPressed = mouseState.RightButton == ButtonState.Pressed;
 
         base.Update(gameTime);
     }
@@ -162,6 +223,8 @@ public class Game1 : Game
         spriteBatch.Begin();
         
         const int cellSize = 64;
+        
+        
         
         for (var x = 0; x < ChessBoard.GetLengthX(); x++)
         for (var y = 0; y < ChessBoard.GetLengthY(); y++)
@@ -186,7 +249,33 @@ public class Game1 : Game
             );
         }
 
+        foreach (var move in possibleMoves)
+        {
+            spriteBatch.Draw(
+                defaultTexture,
+                new Rectangle((int)move.X * cellSize + cellSize / 4, (int)move.Y * cellSize + cellSize / 4, cellSize / 2, cellSize / 2),
+                null,
+                Color.FromNonPremultiplied(214,214,189,125),
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0f
+            );
+        }
 
+        foreach (var square in highlightedSquares)
+        {
+            spriteBatch.Draw(
+                defaultTexture,
+                new Rectangle((int)square.X * cellSize, (int)square.Y * cellSize, cellSize, cellSize),
+                null,
+                Color.FromNonPremultiplied(255,0,0,125),
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0f
+            );
+        }
         //draw the pieces onto the screen
         foreach (Piece piece in board)
             if (piece != null)
@@ -346,8 +435,8 @@ public class Game1 : Game
                             break;
                     }
             }
-
-
+        
+        
         
         spriteBatch.End();
         base.Draw(gameTime);
