@@ -286,18 +286,22 @@ public class King : Piece
                 //Check for castling
         if (!hasMoved && newX == PieceX + 2 && newY == PieceY && board[newX, newY] == null && board[newX - 1, newY] == null)
         {
-            if (board[newX + 1, newY] != null && board[newX + 1, newY].GetPieceType() == PieceType.Rook && board[newX + 1, newY].IsWhite == IsWhite && board[newX + 1, newY].HasMoved == false)
+            if (board[newX + 1, newY] != null && board[newX + 1, newY].GetPieceType() == PieceType.Rook && 
+                board[newX + 1, newY].IsWhite == IsWhite && !board[newX + 1, newY].HasMoved)
             {
                 return true;
             }
         }
-        if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null && board[newX + 1, newY] == null && board[newX + 2, newY] == null)
+
+        if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null &&
+            board[newX - 1, newY] == null)
         {
-            if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook && board[newX - 2, newY].IsWhite == IsWhite && board[newX - 2, newY].HasMoved == false)
+            if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook &&
+                board[newX - 2, newY].IsWhite == IsWhite && !board[newX - 2, newY].HasMoved)
             {
                 return true;
             }
-        } 
+        }
         return Math.Abs(newX - PieceX) <= 1 && Math.Abs(newY - PieceY) <= 1;
 
     }
@@ -319,10 +323,10 @@ public class King : Piece
         }
         //queen side castling
         if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null &&
-            board[newX + 1, newY] == null && board[newX + 2, newY] == null)
+            board[newX - 1, newY] == null)
         {
             if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == PieceType.Rook &&
-                board[newX - 2, newY].IsWhite == IsWhite && board[newX - 2, newY].HasMoved == false)
+                board[newX - 2, newY].IsWhite == IsWhite && !board[newX - 2, newY].HasMoved)
             {
                 board[newX - 2, newY] = null;
                 new Rook(IsWhite, newX + 1, newY, board);
