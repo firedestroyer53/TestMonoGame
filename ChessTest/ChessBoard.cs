@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 
 namespace ChessTest;
@@ -6,6 +7,8 @@ namespace ChessTest;
 public class ChessBoard : IEnumerable
 {
     // class for a chessboard
+
+    
     private static readonly Piece[,] Board = new Piece[8, 8];
 
     public static void PlacePiece(Piece piece)

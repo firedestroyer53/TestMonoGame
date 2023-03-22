@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
+// ReSharper disable ObjectCreationAsStatement
+
 // ReSharper disable InconsistentNaming
 
 namespace ChessTest;
 
+[SuppressMessage("Performance", "CA1806:Do not ignore method results")]
 public class Game1 : Game
 {
     private Texture2D blackBishopTexture;
@@ -41,7 +45,8 @@ public class Game1 : Game
     private bool turn = true;
     private bool wasLeftButtonPressed;
     private bool wasRightButtonPressed;
-    
+
+
     public Game1()
     {
         var graphics = new GraphicsDeviceManager(this);
@@ -91,15 +96,14 @@ public class Game1 : Game
         {
             if (piece == null) continue;
             for(var x = 0; x<8; x++)
+            for(var y = 0; y<8; y++)
             {
-                for(var y = 0; y<8; y++)
+                if(piece.testIsMoveValid(x, y))
                 {
-                    if(piece.testIsMoveValid(x, y))
-                    {
-                        validMoves.Add(new Dictionary<Piece, Vector2> {{piece, new Vector2(x, y)}});
-                    }
+                    validMoves.Add(new Dictionary<Piece, Vector2> {{piece, new Vector2(x, y)}});
                 }
             }
+        
         }
         
         base.Initialize();
@@ -151,15 +155,11 @@ public class Game1 : Game
                 if (selectedPiece != null)
                 {
                     for(var x = 0; x < 8; x++)
+                    for(var y = 0; y < 8; y++)
                     {
-                        for(var y = 0; y < 8; y++)
-                        {
-                            if(selectedPiece.testIsMoveValid(x, y))
-                            {
-                                // check if already in possibleMoves
-                                if(!possibleMoves.Contains(new Vector2(x, y))) possibleMoves.Add(new Vector2(x, y));
-                            }
-                        }
+                        if (!selectedPiece.testIsMoveValid(x, y)) continue;
+                        // check if already in possibleMoves
+                        if (!possibleMoves.Contains(new Vector2(x, y))) possibleMoves.Add(new Vector2(x, y));
                     }
                 }
                 
@@ -172,6 +172,8 @@ public class Game1 : Game
                     if (turn == selectedPiece.IsWhite)
                         if (selectedPiece.IsMoveValid(cellX, cellY))
                         {
+                            
+                            
                             if (board[cellX, cellY] != null)
                                 soundEffects[1].Play();
                             else
@@ -183,13 +185,11 @@ public class Game1 : Game
                             {
                                 if (piece == null) continue;
                                 for(var x = 0; x<8; x++)
+                                for(var y = 0; y<8; y++)
                                 {
-                                    for(var y = 0; y<8; y++)
+                                    if(piece.testIsMoveValid(x, y))
                                     {
-                                        if(piece.testIsMoveValid(x, y))
-                                        {
-                                            validMoves.Add(new Dictionary<Piece, Vector2> {{piece, new Vector2(x, y)}});
-                                        }
+                                        validMoves.Add(new Dictionary<Piece, Vector2> {{piece, new Vector2(x, y)}});
                                     }
                                 }
                             }
@@ -207,7 +207,9 @@ public class Game1 : Game
         if (mouseState.RightButton == ButtonState.Pressed && !wasRightButtonPressed)
         {
             // Check if already highlighted before adding
-            if (!highlightedSquares.Contains(new Vector2(cellX, cellY))) highlightedSquares.Add(new Vector2(cellX, cellY));
+            if (!highlightedSquares.Contains(new Vector2(cellX, cellY)))
+                highlightedSquares.Add(new Vector2(cellX, cellY));
+            else highlightedSquares.Remove(new Vector2(cellX, cellY));
         }
 
         wasLeftButtonPressed = mouseState.LeftButton == ButtonState.Pressed;
@@ -435,8 +437,6 @@ public class Game1 : Game
                             break;
                     }
             }
-        
-        
         
         spriteBatch.End();
         base.Draw(gameTime);
