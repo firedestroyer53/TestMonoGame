@@ -36,7 +36,7 @@ public class Game1 : Game
 
     private readonly ChessBoard board = new();
     
-    private readonly List<Dictionary<Piece, Vector2>> validMoves = new();
+    public static readonly List<Tuple<Piece, Vector2>> ValidMoves = new();
     private readonly List<Vector2> possibleMoves = new();
     private readonly List<Vector2> highlightedSquares = new();
     private Piece selectedPiece;
@@ -45,15 +45,16 @@ public class Game1 : Game
     private bool turn = true;
     private bool wasLeftButtonPressed;
     private bool wasRightButtonPressed;
-
+    
+    private const int cellSize = 64;
 
     public Game1()
     {
         var graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        graphics.PreferredBackBufferWidth = 512;
-        graphics.PreferredBackBufferHeight = 512;
+        graphics.PreferredBackBufferWidth = cellSize*8;
+        graphics.PreferredBackBufferHeight = cellSize*8;
         graphics.ApplyChanges();
     }
 
@@ -100,10 +101,9 @@ public class Game1 : Game
             {
                 if(piece.testIsMoveValid(x, y))
                 {
-                    validMoves.Add(new Dictionary<Piece, Vector2> {{piece, new Vector2(x, y)}});
+                    ValidMoves.Add(new Tuple<Piece, Vector2>(piece, new Vector2(x, y)));
                 }
             }
-        
         }
         
         base.Initialize();
@@ -133,15 +133,14 @@ public class Game1 : Game
     protected override void Update(GameTime gameTime)
     {
         var mouseState = Mouse.GetState();
-        var cellX = mouseState.X / 64;
-        var cellY = mouseState.Y / 64;
+        var cellX = mouseState.X / cellSize;
+        var cellY = mouseState.Y / cellSize;
 
         if (mouseState.LeftButton == ButtonState.Pressed && !wasLeftButtonPressed)
         {
             // Get the position of the cell that the mouse is currently on
             highlightedSquares.Clear();
-
-
+            
             if (selectedPiece == null || !selectedPiece.testIsMoveValid(cellX, cellY))
             {
                 // If there's no piece currently selected, check if there's a piece at the clicked cell and select it
@@ -179,8 +178,9 @@ public class Game1 : Game
                             else
                                 soundEffects[0].Play();
                             ChessBoard.MovePiece(selectedPiece, cellX, cellY);
+                            board.LastMovedPiece = selectedPiece;
                             turn = !turn;
-                            validMoves.Clear();
+                            ValidMoves.Clear();
                             foreach(Piece piece in board)
                             {
                                 if (piece == null) continue;
@@ -189,14 +189,14 @@ public class Game1 : Game
                                 {
                                     if(piece.testIsMoveValid(x, y))
                                     {
-                                        validMoves.Add(new Dictionary<Piece, Vector2> {{piece, new Vector2(x, y)}});
+                                        ValidMoves.Add(new Tuple<Piece, Vector2>(piece, new Vector2(x,y)));
                                     }
                                 }
                             }
                         }
                     selectedPiece = null; // Deselect the piece after it's been moved
                     possibleMoves.Clear();
-                    validMoves.Clear();
+                    ValidMoves.Clear();
                 }
                 catch (Exception ex)
                 {
@@ -223,11 +223,8 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.White);
 
         spriteBatch.Begin();
-        
-        const int cellSize = 64;
-        
-        
-        
+
+
         for (var x = 0; x < ChessBoard.GetLengthX(); x++)
         for (var y = 0; y < ChessBoard.GetLengthY(); y++)
         {
@@ -251,19 +248,7 @@ public class Game1 : Game
             );
         }
 
-        foreach (var move in possibleMoves)
-        {
-            spriteBatch.Draw(
-                defaultTexture,
-                new Rectangle((int)move.X * cellSize + cellSize / 4, (int)move.Y * cellSize + cellSize / 4, cellSize / 2, cellSize / 2),
-                null,
-                Color.FromNonPremultiplied(214,214,189,125),
-                0f,
-                Vector2.Zero,
-                SpriteEffects.None,
-                0f
-            );
-        }
+        
 
         foreach (var square in highlightedSquares)
         {
@@ -437,6 +422,20 @@ public class Game1 : Game
                             break;
                     }
             }
+        
+        foreach (var move in possibleMoves)
+        {
+            spriteBatch.Draw(
+                defaultTexture,
+                new Rectangle((int)move.X * cellSize + cellSize / 4, (int)move.Y * cellSize + cellSize / 4, cellSize / 2, cellSize / 2),
+                null,
+                Color.FromNonPremultiplied(214,214,189,125),
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0f
+            );
+        }
         
         spriteBatch.End();
         base.Draw(gameTime);

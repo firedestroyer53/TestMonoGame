@@ -1,4 +1,6 @@
 using System;
+using Microsoft.Xna.Framework;
+
 // ReSharper disable InconsistentNaming
 
 namespace ChessTest;
@@ -40,9 +42,7 @@ public abstract class Piece
         ChessBoard.PlacePiece(this);
         JustMoved = false;
     }
-
-
-
+    
     protected abstract bool IsValidMove(int newX, int newY, ChessBoard board);
     protected abstract bool testIsValidMove(int newX, int newY, ChessBoard board);
     public bool testIsMoveValid(int newX, int newY)
@@ -59,6 +59,8 @@ public abstract class Piece
         {
             return false;
         }
+        
+        
         
         // Check if the move goes through any pieces on the board
         if (GetPieceType() == PieceType.Knight) return testIsValidMove(newX, newY, board);
@@ -172,21 +174,20 @@ public class Pawn : Piece
             }
         }
 
-        //white pawn en passant
-        if (IsWhite && Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY + 1] != null &&
-            board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved && board[newX, newY + 1].IsWhite != IsWhite)
+        switch (IsWhite)
         {
-            return true;
+            //white pawn en passant
+            case true when Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY + 1] != null &&
+                           board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved && 
+                           board.LastMovedPiece == board[newX,newY-1] && board[newX, newY + 1].IsWhite != IsWhite:
+            //black pawn en passant
+            case false when Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY - 1] != null &&
+                            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved && 
+                            board.LastMovedPiece == board[newX,newY-1] && board[newX, newY - 1].IsWhite != IsWhite:
+                return true;
+            default:
+                return false;
         }
-
-        //black pawn en passant
-        if (!IsWhite && Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY - 1] != null &&
-            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved && board[newX, newY - 1].IsWhite != IsWhite)
-        {
-            return true;
-        }
-
-        return false;
     }
 
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
@@ -246,7 +247,8 @@ public class Pawn : Piece
         }
         //white pawn en passant
         if (Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY + 1] != null &&
-            board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved)
+            board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved && board.LastMovedPiece == board[newX, newY -1] &&
+            board[newX, newY + 1].IsWhite != IsWhite)
         {
             board[newX, newY + 1] = null;
             HasMoved = true;
@@ -256,7 +258,8 @@ public class Pawn : Piece
         //black pawn en passant
         // ReSharper disable once InvertIf
         if (Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY - 1] != null &&
-            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved)
+            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved && board.LastMovedPiece == board[newX, newY -1] &&
+            board[newX, newY - 1].IsWhite != IsWhite)
         {
             board[newX, newY - 1] = null;
             HasMoved = true;
