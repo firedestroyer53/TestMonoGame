@@ -11,29 +11,23 @@ public class ChessBoard : IEnumerable
     // class for a chessboard
 
     
-    private static readonly Piece[,] Board = new Piece[8, 8];
-
+    public Piece[,] Board { get; private set; }
+    
     public Piece LastMovedPiece { get; set; }
-    public static void PlacePiece(Piece piece)
+    public void PlacePiece(Piece piece)
     {
         // method to add a piece to the board
 
         Board[piece.PieceX, piece.PieceY] = piece;
     }
-    public void PlacePiece2(Piece piece)
-    {
-        // method to add a piece to the board
-
-        Board[piece.PieceX, piece.PieceY] = piece;
-    }
-
+    
     //support to use foreach loop on chessboard
     public IEnumerator GetEnumerator()
     {
         return Board.Cast<Piece>().GetEnumerator();
     }
 
-    public static void MovePiece(Piece piece, int x, int y)
+    public void MovePiece(Piece piece, int x, int y)
     {
         // method to move a piece on the board
         Board[piece.PieceX, piece.PieceY] = null;
@@ -44,15 +38,6 @@ public class ChessBoard : IEnumerable
         
     }
 
-    public void MovePiece2(Piece piece, int x, int y)
-    {
-        Board[piece.PieceX, piece.PieceY] = null;
-        
-        piece.PieceX = x;
-        piece.PieceY = y;
-        Board[piece.PieceX, piece.PieceY] = piece;
-    }
-    
     // isInCheck method here
     public bool IsInCheck(bool isWhite)
     {
@@ -76,13 +61,13 @@ public class ChessBoard : IEnumerable
     }
     
     // get length of x function here
-    public static int GetLengthX()
+    public int GetLengthX()
     {
         return Board.GetLength(0);
     }
 
     // get length of y function here
-    public static int GetLengthY()
+    public int GetLengthY()
     {
         return Board.GetLength(1);
     }
@@ -133,4 +118,5 @@ public class ChessBoard : IEnumerable
         }
     }
 
+    
 }

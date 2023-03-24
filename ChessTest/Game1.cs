@@ -61,38 +61,43 @@ public class Game1 : Game
     protected override void Initialize()
     {
         //setup blank board
-
+        var pieces = new List<Piece>();
         for (var i = 0; i < 8; i++)
         {
             // Create a new white pawn with the current pawn number and position.
-            new Pawn(true, i, 6, board);
+            pieces.Add(new Pawn(true, i, 6, board));
         }
 
         // Create eight black pawns.
         for (var i = 0; i < 8; i++)
         {
             // Create a new black pawn with the current pawn number and position.
-            new Pawn(false, i, 1, board);
+            pieces.Add(new Pawn(false, i, 1, board));
         }
 
         //initialize the rest of the pieces
-        new King(true, 4, 7, board); //White King
-        new King(false, 4, 0, board); //Black King
-        new Queen(true, 3, 7, board); //White Queen
-        new Queen(false, 3, 0, board); //Black Queen
-        new Rook(true, 0, 7, board); //White Rook
-        new Rook(true, 7, 7, board); //White Rook
-        new Rook(false, 0, 0, board); //Black Rook
-        new Rook(false, 7, 0, board); //Black Rook
-        new Knight(true, 1, 7, board); //White Knight
-        new Knight(true, 6, 7, board); //White Knight
-        new Knight(false, 1, 0, board); //Black Knight
-        new Knight(false, 6, 0, board); //Black Knight
-        new Bishop(true, 2, 7, board); //White Bishop
-        new Bishop(true, 5, 7, board); //White Bishop
-        new Bishop(false, 2, 0, board); //Black Bishop
-        new Bishop(false, 5, 0, board); //Black Bishop
+        pieces.Add(new King(true, 4, 7, board)); //White King
+        pieces.Add(new King(false, 4, 0, board)); //Black King
+        pieces.Add(new Queen(true, 3, 7, board)); //White Queen
+        pieces.Add(new Queen(false, 3, 0, board)); //Black Queen
+        pieces.Add(new Rook(true, 0, 7, board)); //White Rook
+        pieces.Add(new Rook(true, 7, 7, board)); //White Rook
+        pieces.Add(new Rook(false, 0, 0, board)); //Black Rook
+        pieces.Add(new Rook(false, 7, 0, board)); //Black Rook
+        pieces.Add(new Knight(true, 1, 7, board)); //White Knight
+        pieces.Add(new Knight(true, 6, 7, board)); //White Knight
+        pieces.Add(new Knight(false, 1, 0, board)); //Black Knight
+        pieces.Add(new Knight(false, 6, 0, board)); //Black Knight
+        pieces.Add(new Bishop(true, 2, 7, board)); //White Bishop
+        pieces.Add(new Bishop(true, 5, 7, board)); //White Bishop
+        pieces.Add(new Bishop(false, 2, 0, board)); //Black Bishop
+        pieces.Add(new Bishop(false, 5, 0, board)); //Black Bishop
 
+        foreach (var piece in pieces)
+        {
+            board.PlacePiece(piece);
+        }
+        
         foreach (Piece piece in board)
         {
             if (piece == null) continue;
@@ -161,7 +166,6 @@ public class Game1 : Game
                         if (!possibleMoves.Contains(new Vector2(x, y))) possibleMoves.Add(new Vector2(x, y));
                     }
                 }
-                
             }
             else
             {
@@ -171,19 +175,19 @@ public class Game1 : Game
                     if (turn == selectedPiece.IsWhite)
                         if (selectedPiece.IsMoveValid(cellX, cellY))
                         {
-                            
-                            
-                            if (board[cellX, cellY] != null)
+                            // If move was an en passant, play the capture sound effect
+                            if (board[cellX, cellY] != null || (selectedPiece is Pawn && Math.Abs(cellY - selectedPiece.PieceY) == 2))
                                 soundEffects[1].Play();
                             else
                                 soundEffects[0].Play();
-                            ChessBoard.MovePiece(selectedPiece, cellX, cellY);
+                            board.MovePiece(selectedPiece, cellX, cellY);
                             board.LastMovedPiece = selectedPiece;
                             turn = !turn;
                             ValidMoves.Clear();
                             foreach(Piece piece in board)
                             {
                                 if (piece == null) continue;
+                                if (piece.IsWhite != turn) continue;
                                 for(var x = 0; x<8; x++)
                                 for(var y = 0; y<8; y++)
                                 {
@@ -223,10 +227,9 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.White);
 
         spriteBatch.Begin();
-
-
-        for (var x = 0; x < ChessBoard.GetLengthX(); x++)
-        for (var y = 0; y < ChessBoard.GetLengthY(); y++)
+        
+        for (var x = 0; x < board.GetLengthX(); x++)
+        for (var y = 0; y < board.GetLengthY(); y++)
         {
             // Calculate the position of the cell based on its x and y index.
             var xPos = x * cellSize;
@@ -234,7 +237,6 @@ public class Game1 : Game
 
             // Determine the color of the cell based on its position.
             var cellColor = (x + y) % 2 == 0 ? whiteSquareColor : blackSquareColor;
-
             // Draw the cell with a colored border.
             spriteBatch.Draw(
                 defaultTexture,
