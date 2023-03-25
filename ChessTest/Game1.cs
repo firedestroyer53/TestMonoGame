@@ -171,8 +171,6 @@ public class Game1 : Game
                     if (turn == selectedPiece.IsWhite)
                         if (selectedPiece.IsMoveValid(cellX, cellY))
                         {
-                            
-                            
                             if (board[cellX, cellY] != null)
                                 soundEffects[1].Play();
                             else
@@ -272,7 +270,7 @@ public class Game1 : Game
                 if (piece.IsWhite)
                     switch (pieceType)
                     {
-                        case PieceType.Pawn:
+                        case { } t when t == typeof(Pawn):
                             spriteBatch.Draw(
                                 whitePawnTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -284,7 +282,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.King:
+                        case { } t when t == typeof(King):
                             spriteBatch.Draw(
                                 whiteKingTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -296,7 +294,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.Queen:
+                        case { } t when t == typeof(Queen):
                             spriteBatch.Draw(
                                 whiteQueenTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -308,7 +306,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.Bishop:
+                        case { } t when t == typeof(Bishop):
                             spriteBatch.Draw(
                                 whiteBishopTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -320,7 +318,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.Knight:
+                        case { } t when t == typeof(Knight):
                             spriteBatch.Draw(
                                 whiteKnightTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -332,7 +330,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.Rook:
+                        case { } t when t == typeof(Rook):
                             spriteBatch.Draw(
                                 whiteRookTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -348,7 +346,7 @@ public class Game1 : Game
                 else
                     switch (pieceType)
                     {
-                        case PieceType.Pawn:
+                        case { } t when t == typeof(Pawn):
                             spriteBatch.Draw(
                                 blackPawnTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -360,7 +358,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.King:
+                        case { } t when t == typeof(King):
                             spriteBatch.Draw(
                                 blackKingTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -372,7 +370,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.Queen:
+                        case { } t when t == typeof(Queen):
                             spriteBatch.Draw(
                                 blackQueenTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -384,7 +382,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.Bishop:
+                        case { } t when t == typeof(Bishop):
                             spriteBatch.Draw(
                                 blackBishopTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -396,7 +394,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.Knight:
+                        case { } t when t == typeof(Knight):
                             spriteBatch.Draw(
                                 blackKnightTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -408,7 +406,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case PieceType.Rook:
+                        case { } t when t == typeof(Rook):
                             spriteBatch.Draw(
                                 blackRookTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -428,7 +426,7 @@ public class Game1 : Game
             spriteBatch.Draw(
                 defaultTexture,
                 new Rectangle((int)move.X * cellSize + cellSize / 4, (int)move.Y * cellSize + cellSize / 4, cellSize / 2, cellSize / 2),
-                null,
+                null, 
                 Color.FromNonPremultiplied(214,214,189,125),
                 0f,
                 Vector2.Zero,
