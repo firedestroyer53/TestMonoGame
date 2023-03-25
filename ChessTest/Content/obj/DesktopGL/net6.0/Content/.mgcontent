@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>DesktopGL</Platform>
+  <Config />
+  <SourceFiles>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/ball.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackBishop.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackKing.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackKnight.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackPawn.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackQueen.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackRook.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackSquare.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/CaptureSound.mp3</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/MoveSound.mp3</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteBishop.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteKing.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteKnight.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhitePawn.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteQueen.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteRook.png</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteSquare.png</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>
