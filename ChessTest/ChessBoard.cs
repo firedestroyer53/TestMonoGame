@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Linq;
 using Microsoft.Xna.Framework;
 
@@ -9,7 +8,6 @@ namespace ChessTest;
 public class ChessBoard : IEnumerable
 {
     // class for a chessboard
-
     
     private static readonly Piece[,] Board = new Piece[8, 8];
 
@@ -17,13 +15,6 @@ public class ChessBoard : IEnumerable
     public static void PlacePiece(Piece piece)
     {
         // method to add a piece to the board
-
-        Board[piece.PieceX, piece.PieceY] = piece;
-    }
-    public void PlacePiece2(Piece piece)
-    {
-        // method to add a piece to the board
-
         Board[piece.PieceX, piece.PieceY] = piece;
     }
 
@@ -33,26 +24,25 @@ public class ChessBoard : IEnumerable
         return Board.Cast<Piece>().GetEnumerator();
     }
 
-    public static void MovePiece(Piece piece, int x, int y)
+    public static void MovePiece(Piece piece, int x, int y, ChessBoard board)
     {
         // method to move a piece on the board
         Board[piece.PieceX, piece.PieceY] = null;
-
-        piece.PieceX = x;
-        piece.PieceY = y;
-        Board[piece.PieceX, piece.PieceY] = piece;
-        
-    }
-
-    public void MovePiece2(Piece piece, int x, int y)
-    {
-        Board[piece.PieceX, piece.PieceY] = null;
         
         piece.PieceX = x;
         piece.PieceY = y;
-        Board[piece.PieceX, piece.PieceY] = piece;
+        // if the piece is a pawn and it has reached the end of the board, promote it
+        if (piece is Pawn { PieceY: 0 or 7 } pawn)
+        {
+            Board[piece.PieceX, piece.PieceY] = new Queen(pawn.IsWhite, pawn.PieceX, pawn.PieceY, board);
+        }
+        else
+        {
+            Board[piece.PieceX, piece.PieceY] = piece;
+        }
+
     }
-    
+
     // isInCheck method here
     public bool IsInCheck(bool isWhite)
     {
@@ -108,7 +98,7 @@ public class ChessBoard : IEnumerable
     }
     
     //board.GetKing()
-    public Piece GetKing(bool isWhite)
+    private Piece GetKing(bool isWhite)
     {
         foreach (var piece in this)
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -39,6 +40,9 @@ public class Game1 : Game
     public static readonly List<Tuple<Piece, Vector2>> ValidMoves = new();
     private readonly List<Vector2> possibleMoves = new();
     private readonly List<Vector2> highlightedSquares = new();
+    
+    private readonly List<Piece> pieces = new();
+
     private Piece selectedPiece;
     private SpriteBatch spriteBatch;
 
@@ -46,8 +50,10 @@ public class Game1 : Game
     private bool wasLeftButtonPressed;
     private bool wasRightButtonPressed;
     
-    private const int cellSize = 64;
+    private const int cellSize = 96;
 
+    
+    
     public Game1()
     {
         var graphics = new GraphicsDeviceManager(this);
@@ -56,42 +62,45 @@ public class Game1 : Game
         graphics.PreferredBackBufferWidth = cellSize*8;
         graphics.PreferredBackBufferHeight = cellSize*8;
         graphics.ApplyChanges();
+        
     }
 
     protected override void Initialize()
     {
         //setup blank board
-
+        
         for (var i = 0; i < 8; i++)
         {
             // Create a new white pawn with the current pawn number and position.
-            new Pawn(true, i, 6, board);
+            pieces.Add(new Pawn(true, i, 6, board));
         }
 
         // Create eight black pawns.
         for (var i = 0; i < 8; i++)
         {
             // Create a new black pawn with the current pawn number and position.
-            new Pawn(false, i, 1, board);
+            pieces.Add(new Pawn(false, i, 1, board));
         }
 
         //initialize the rest of the pieces
-        new King(true, 4, 7, board); //White King
-        new King(false, 4, 0, board); //Black King
-        new Queen(true, 3, 7, board); //White Queen
-        new Queen(false, 3, 0, board); //Black Queen
-        new Rook(true, 0, 7, board); //White Rook
-        new Rook(true, 7, 7, board); //White Rook
-        new Rook(false, 0, 0, board); //Black Rook
-        new Rook(false, 7, 0, board); //Black Rook
-        new Knight(true, 1, 7, board); //White Knight
-        new Knight(true, 6, 7, board); //White Knight
-        new Knight(false, 1, 0, board); //Black Knight
-        new Knight(false, 6, 0, board); //Black Knight
-        new Bishop(true, 2, 7, board); //White Bishop
-        new Bishop(true, 5, 7, board); //White Bishop
-        new Bishop(false, 2, 0, board); //Black Bishop
-        new Bishop(false, 5, 0, board); //Black Bishop
+        pieces.Add(new King(true, 4, 7, board)); //White King
+        pieces.Add(new King(false, 4, 0, board)); //Black King
+        pieces.Add(new Queen(true, 3, 7, board)); //White Queen
+        pieces.Add(new Queen(false, 3, 0, board)); //Black Queen
+        pieces.Add(new Rook(true, 0, 7, board)); //White Rook
+        pieces.Add(new Rook(true, 7, 7, board)); //White Rook
+        pieces.Add(new Rook(false, 0, 0, board)); //Black Rook
+        pieces.Add(new Rook(false, 7, 0, board)); //Black Rook
+        pieces.Add(new Knight(true, 1, 7, board)); //White Knight
+        pieces.Add(new Knight(true, 6, 7, board)); //White Knight
+        pieces.Add(new Knight(false, 1, 0, board)); //Black Knight
+        pieces.Add(new Knight(false, 6, 0, board)); //Black Knight
+        pieces.Add(new Bishop(true, 2, 7, board)); //White Bishop
+        pieces.Add(new Bishop(true, 5, 7, board)); //White Bishop
+        pieces.Add(new Bishop(false, 2, 0, board)); //Black Bishop
+        pieces.Add(new Bishop(false, 5, 0, board)); //Black Bishop
+
+        pieces.ToList().ForEach(ChessBoard.PlacePiece);
 
         foreach (Piece piece in board)
         {
@@ -99,13 +108,14 @@ public class Game1 : Game
             for(var x = 0; x<8; x++)
             for(var y = 0; y<8; y++)
             {
-                if(piece.testIsMoveValid(x, y))
+                if(piece.TestIsMoveValid(x, y))
                 {
                     ValidMoves.Add(new Tuple<Piece, Vector2>(piece, new Vector2(x, y)));
                 }
             }
         }
-        
+        Window.Title = "Chess";
+
         base.Initialize();
     }
 
@@ -132,16 +142,16 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
+        // Get the position of the cell that the mouse is currently on
         var mouseState = Mouse.GetState();
         var cellX = mouseState.X / cellSize;
         var cellY = mouseState.Y / cellSize;
 
         if (mouseState.LeftButton == ButtonState.Pressed && !wasLeftButtonPressed)
         {
-            // Get the position of the cell that the mouse is currently on
             highlightedSquares.Clear();
             
-            if (selectedPiece == null || !selectedPiece.testIsMoveValid(cellX, cellY))
+            if (selectedPiece == null || !selectedPiece.TestIsMoveValid(cellX, cellY))
             {
                 // If there's no piece currently selected, check if there's a piece at the clicked cell and select it
                 var clickedPiece = board[cellX, cellY];
@@ -149,14 +159,17 @@ public class Game1 : Game
                 {
                     possibleMoves.Clear();
                 }
+
                 selectedPiece = clickedPiece;
+                
                 // add possible moves for selected piece to possibleMoves
                 if (selectedPiece != null)
                 {
                     for(var x = 0; x < 8; x++)
                     for(var y = 0; y < 8; y++)
                     {
-                        if (!selectedPiece.testIsMoveValid(x, y)) continue;
+                        if (!selectedPiece.TestIsMoveValid(x, y)) continue;
+                        if (turn != selectedPiece.IsWhite) continue;
                         // check if already in possibleMoves
                         if (!possibleMoves.Contains(new Vector2(x, y))) possibleMoves.Add(new Vector2(x, y));
                     }
@@ -175,7 +188,7 @@ public class Game1 : Game
                                 soundEffects[1].Play();
                             else
                                 soundEffects[0].Play();
-                            ChessBoard.MovePiece(selectedPiece, cellX, cellY);
+                            ChessBoard.MovePiece(selectedPiece, cellX, cellY, board);
                             board.LastMovedPiece = selectedPiece;
                             turn = !turn;
                             ValidMoves.Clear();
@@ -185,7 +198,7 @@ public class Game1 : Game
                                 for(var x = 0; x<8; x++)
                                 for(var y = 0; y<8; y++)
                                 {
-                                    if(piece.testIsMoveValid(x, y))
+                                    if(piece.TestIsMoveValid(x, y))
                                     {
                                         ValidMoves.Add(new Tuple<Piece, Vector2>(piece, new Vector2(x,y)));
                                     }
@@ -270,7 +283,7 @@ public class Game1 : Game
                 if (piece.IsWhite)
                     switch (pieceType)
                     {
-                        case { } t when t == typeof(Pawn):
+                        case { } when pieceType == typeof(Pawn):
                             spriteBatch.Draw(
                                 whitePawnTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -282,7 +295,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(King):
+                        case { } when pieceType == typeof(King):
                             spriteBatch.Draw(
                                 whiteKingTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -294,7 +307,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(Queen):
+                        case { } when pieceType == typeof(Queen):
                             spriteBatch.Draw(
                                 whiteQueenTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -306,7 +319,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(Bishop):
+                        case { } when pieceType == typeof(Bishop):
                             spriteBatch.Draw(
                                 whiteBishopTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -318,7 +331,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(Knight):
+                        case { } when pieceType == typeof(Knight):
                             spriteBatch.Draw(
                                 whiteKnightTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -330,7 +343,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(Rook):
+                        case { } when pieceType == typeof(Rook):
                             spriteBatch.Draw(
                                 whiteRookTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -346,7 +359,7 @@ public class Game1 : Game
                 else
                     switch (pieceType)
                     {
-                        case { } t when t == typeof(Pawn):
+                        case { } when pieceType == typeof(Pawn):
                             spriteBatch.Draw(
                                 blackPawnTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -358,7 +371,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(King):
+                        case { } when pieceType == typeof(King):
                             spriteBatch.Draw(
                                 blackKingTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -370,7 +383,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(Queen):
+                        case { } when pieceType == typeof(Queen):
                             spriteBatch.Draw(
                                 blackQueenTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -382,7 +395,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(Bishop):
+                        case { } when pieceType == typeof(Bishop):
                             spriteBatch.Draw(
                                 blackBishopTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -394,7 +407,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(Knight):
+                        case { } when pieceType == typeof(Knight):
                             spriteBatch.Draw(
                                 blackKnightTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
@@ -406,7 +419,7 @@ public class Game1 : Game
                                 0f
                             );
                             break;
-                        case { } t when t == typeof(Rook):
+                        case { } when pieceType == typeof(Rook):
                             spriteBatch.Draw(
                                 blackRookTexture,
                                 new Rectangle(piece.PieceX * cellSize, piece.PieceY * cellSize, cellSize, cellSize),
