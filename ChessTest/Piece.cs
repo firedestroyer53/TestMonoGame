@@ -174,20 +174,23 @@ public class Pawn : Piece
             }
         }
 
-        switch (IsWhite)
+        if (IsWhite && Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null &&
+            board[newX, newY + 1] != null &&
+            board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved &&
+            board.LastMovedPiece == board[newX, newY + 1] && board[newX, newY + 1].IsWhite != IsWhite)
         {
-            //white pawn en passant
-            case true when Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY + 1] != null &&
-                           board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved && 
-                           board.LastMovedPiece == board[newX,newY-1] && board[newX, newY + 1].IsWhite != IsWhite:
-            //black pawn en passant
-            case false when Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY - 1] != null &&
-                            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved && 
-                            board.LastMovedPiece == board[newX,newY-1] && board[newX, newY - 1].IsWhite != IsWhite:
-                return true;
-            default:
-                return false;
+            return true;
         }
+
+        if (!IsWhite && Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null &&
+            board[newX, newY - 1] != null &&
+            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved &&
+            board.LastMovedPiece == board[newX, newY - 1] && board[newX, newY - 1].IsWhite != IsWhite)
+        {
+            return true;
+        }
+        
+        return false;
     }
 
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
@@ -246,27 +249,27 @@ public class Pawn : Piece
             }
         }
         //white pawn en passant
-        if (Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY + 1] != null &&
-            board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved && board.LastMovedPiece == board[newX, newY -1] &&
-            board[newX, newY + 1].IsWhite != IsWhite)
+        if (IsWhite && Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null &&
+            board[newX, newY + 1] != null &&
+            board[newX, newY + 1].GetPieceType() == PieceType.Pawn && board[newX, newY + 1].JustMoved &&
+            board.LastMovedPiece == board[newX, newY + 1] && board[newX, newY + 1].IsWhite != IsWhite)
         {
             board[newX, newY + 1] = null;
             HasMoved = true;
             JustMoved = false;
             return true;
         }
-        //black pawn en passant
-        // ReSharper disable once InvertIf
-        if (Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY - 1] != null &&
-            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved && board.LastMovedPiece == board[newX, newY -1] &&
-            board[newX, newY - 1].IsWhite != IsWhite)
+
+        if (!IsWhite && Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null &&
+            board[newX, newY - 1] != null &&
+            board[newX, newY - 1].GetPieceType() == PieceType.Pawn && board[newX, newY - 1].JustMoved &&
+            board.LastMovedPiece == board[newX, newY - 1] && board[newX, newY - 1].IsWhite != IsWhite)
         {
             board[newX, newY - 1] = null;
             HasMoved = true;
             JustMoved = false;
             return true;
         }
-
         return false;
     }
 }
