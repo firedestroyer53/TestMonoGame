@@ -31,6 +31,7 @@ public abstract class Piece
     protected abstract bool TestIsValidMove(int newX, int newY, ChessBoard board);
     public bool TestIsMoveValid(int newX, int newY)
     {
+        if (GetPieceType() == typeof(Rat)) return true;
         // Check if the move is within the bounds of the board
         if (newX is < 0 or > 8 || newY is < 0 or > 8)
         {
@@ -66,6 +67,8 @@ public abstract class Piece
     }
     public bool IsMoveValid(int newX, int newY)
     {
+        if (GetPieceType() == typeof(Rat)) return true;
+
         // Check if the move is within the bounds of the board
         if (newX is < 0 or > 8 || newY is < 0 or > 8)
         {
@@ -413,5 +416,28 @@ public class Knight : Piece
         var dx = Math.Abs(newX - PieceX);
         var dy = Math.Abs(newY - PieceY);
         return (dx == 1 && dy == 2) || (dx == 2 && dy == 1);
+    }
+}
+
+public class Rat : Piece
+{
+    public Rat(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
+    {
+    }
+    
+    public override Type GetPieceType()
+    {
+        return typeof(Rat);
+    }
+    
+    protected override bool TestIsValidMove(int newX, int newY, ChessBoard board)
+    {
+        return true;
+    }
+    
+    protected override bool IsValidMove(int newX, int newY, ChessBoard board)
+    {
+        // Check if the move is along a straight line
+        return true;
     }
 }

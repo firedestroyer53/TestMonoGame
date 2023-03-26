@@ -24,6 +24,7 @@ public class Game1 : Game
     private Texture2D whitePawnTexture;
     private Texture2D whiteQueenTexture;
     private Texture2D whiteRookTexture;
+    private Texture2D ratTexture;
     private Texture2D defaultTexture;
 
     private readonly List<SoundEffect> soundEffects = new();
@@ -91,7 +92,7 @@ public class Game1 : Game
             new Bishop(true, 2, 7, board),  // white bishops
             new Bishop(true, 5, 7, board),
             new Bishop(false, 2, 0, board), // black bishops
-            new Bishop(false, 5, 0, board)
+            new Bishop(false, 5, 0, board),
         });
 
         pieces.ForEach(piece => board.PlacePiece(piece)); // place pieces on the board
@@ -130,6 +131,8 @@ public class Game1 : Game
         blackKnightTexture = Content.Load<Texture2D>("BlackKnight");
         whiteRookTexture = Content.Load<Texture2D>("WhiteRook");
         blackRookTexture = Content.Load<Texture2D>("BlackRook");
+        ratTexture = Content.Load<Texture2D>("Rat");
+        
         soundEffects.Add(Content.Load<SoundEffect>("MoveSound"));
         soundEffects.Add(Content.Load<SoundEffect>("CaptureSound"));
     }
@@ -360,6 +363,18 @@ public class Game1 : Game
                         case { } when pieceType == typeof(Rook):
                             spriteBatch.Draw(
                                 whiteRookTexture,
+                                new Rectangle(piece.PieceX * cellSize + 6, piece.PieceY * cellSize + 6, cellSize - 12, cellSize - 12),
+                                null,
+                                white,
+                                0f,
+                                Vector2.Zero,
+                                SpriteEffects.None,
+                                0f
+                            );
+                            break;
+                        case { } when pieceType == typeof(Rat):
+                            spriteBatch.Draw(
+                                ratTexture,
                                 new Rectangle(piece.PieceX * cellSize + 6, piece.PieceY * cellSize + 6, cellSize - 12, cellSize - 12),
                                 null,
                                 white,

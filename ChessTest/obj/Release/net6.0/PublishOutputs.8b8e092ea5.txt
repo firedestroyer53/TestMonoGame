@@ -10,6 +10,7 @@ C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\C
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/CaptureSound.xnb
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/MoveSound.ogg
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/MoveSound.xnb
+C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/Rat.xnb
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/WhiteBishop.xnb
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/WhiteKing.xnb
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/WhiteKnight.xnb

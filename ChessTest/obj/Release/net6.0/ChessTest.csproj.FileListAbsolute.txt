@@ -41,3 +41,4 @@ C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\obj\Release\net6.0\refint\Ch
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\obj\Release\net6.0\ChessTest.pdb
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\obj\Release\net6.0\ChessTest.genruntimeconfig.cache
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\obj\Release\net6.0\ref\ChessTest.dll
+C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\Content\Rat.xnb

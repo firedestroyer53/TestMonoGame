@@ -13,6 +13,7 @@
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackSquare.png</File>
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/CaptureSound.mp3</File>
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/MoveSound.mp3</File>
+    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/Rat.png</File>
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteBishop.png</File>
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteKing.png</File>
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteKnight.png</File>
@@ -22,6 +23,7 @@
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteSquare.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

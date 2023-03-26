@@ -41,3 +41,4 @@ C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\obj\Debug\net6.0\ChessTest.g
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\obj\Debug\net6.0\ref\ChessTest.dll
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Debug\net6.0\Content\CaptureSound.ogg
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Debug\net6.0\Content\MoveSound.ogg
+C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Debug\net6.0\Content\Rat.xnb
