@@ -290,7 +290,8 @@ public class King : Piece
                 board[newX + 1, newY].IsWhite == IsWhite && board[newX + 1, newY].HasMoved == false)
             {
                 board[newX + 1, newY] = null;
-                new Rook(IsWhite, newX - 1, newY, board);
+                var rook =new Rook(IsWhite, newX - 1, newY, board);
+                board.PlacePiece(rook);
                 board[newX - 1, newY].HasMoved = true;
                 _hasMoved = true;
                 return true;
@@ -304,7 +305,8 @@ public class King : Piece
                 board[newX - 2, newY].IsWhite == IsWhite && !board[newX - 2, newY].HasMoved)
             {
                 board[newX - 2, newY] = null;
-                new Rook(IsWhite, newX + 1, newY, board);
+                var rook = new Rook(IsWhite, newX + 1, newY, board);
+                board.PlacePiece(rook);
                 board[newX + 1, newY].HasMoved = true;
                 _hasMoved = true;
                 return true;

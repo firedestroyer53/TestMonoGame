@@ -94,7 +94,7 @@ public class Game1 : Game
             new Bishop(false, 5, 0, board)
         });
 
-        pieces.ForEach(ChessBoard.PlacePiece); // place pieces on the board
+        pieces.ForEach(piece => board.PlacePiece(piece)); // place pieces on the board
 
         foreach (Piece piece in board)
         {

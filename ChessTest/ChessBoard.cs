@@ -12,7 +12,7 @@ public class ChessBoard : IEnumerable
     private static readonly Piece[,] Board = new Piece[8, 8];
 
     public Piece LastMovedPiece { get; set; }
-    public static void PlacePiece(Piece piece)
+    public void PlacePiece(Piece piece)
     {
         // method to add a piece to the board
         Board[piece.PieceX, piece.PieceY] = piece;
