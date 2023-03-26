@@ -24,7 +24,7 @@ public class ChessBoard : IEnumerable
         return Board.Cast<Piece>().GetEnumerator();
     }
 
-    public static void MovePiece(Piece piece, int x, int y, ChessBoard board)
+    public void MovePiece(Piece piece, int x, int y, ChessBoard board)
     {
         // method to move a piece on the board
         Board[piece.PieceX, piece.PieceY] = null;

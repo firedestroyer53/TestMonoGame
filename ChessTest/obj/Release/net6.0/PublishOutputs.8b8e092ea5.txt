@@ -1,5 +1,4 @@
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\ChessTest.exe
-C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/ball.xnb
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/BlackBishop.xnb
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/BlackKing.xnb
 C:\Users\gusw1\RiderProjects\TestMonoGame\ChessTest\bin\Release\net6.0\publish\Content/BlackKnight.xnb

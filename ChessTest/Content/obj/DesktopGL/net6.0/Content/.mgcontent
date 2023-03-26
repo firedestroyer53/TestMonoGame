@@ -4,7 +4,6 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/ball.png</File>
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackBishop.png</File>
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackKing.png</File>
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/BlackKnight.png</File>
@@ -23,7 +22,6 @@
     <File>C:/Users/gusw1/RiderProjects/TestMonoGame/ChessTest/Content/WhiteSquare.png</File>
   </SourceFiles>
   <DestFiles>
-    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
