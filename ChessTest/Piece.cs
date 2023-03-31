@@ -1,22 +1,21 @@
 using System;
+
 // ReSharper disable InvertIf
 
 namespace ChessTest;
 
 public abstract class Piece
 {
+    private readonly ChessBoard board;
+
     // Template for a chess piece class
     public readonly bool IsWhite;
-
-    public int PieceX;
-    public int PieceY;
-    private readonly ChessBoard _board;
 
     public bool HasMoved;
     public bool JustMoved;
 
-    // getPiece method which returns what type of piece it is
-    public abstract Type GetPieceType();
+    public int PieceX;
+    public int PieceY;
     
     // Class constructor
     protected Piece(bool iswhite, int x, int y, ChessBoard board)
@@ -24,30 +23,28 @@ public abstract class Piece
         IsWhite = iswhite;
         PieceX = x;
         PieceY = y;
-        _board = board;
+        this.board = board;
     }
-    
+
+    public abstract Type GetPieceType();
     protected abstract bool IsValidMove(int newX, int newY, ChessBoard board);
     protected abstract bool TestIsValidMove(int newX, int newY, ChessBoard board);
+
     public bool TestIsMoveValid(int newX, int newY)
     {
-        if (GetPieceType() == typeof(Rat)) return true;
-        // Check if the move is within the bounds of the board
-        if (newX is < 0 or > 8 || newY is < 0 or > 8)
-        {
-            return false;
-        }
+        if (GetPieceType() == typeof(Rat))
+            // Check if the move is within the bounds of the board
+            if (newX is < 0 or > 8 || newY is < 0 or > 8)
+                return true;
 
         // Check if there is a piece at the destination 
-        var pieceAtDestination = _board[newX, newY];
-        if (pieceAtDestination != null && pieceAtDestination.IsWhite == IsWhite)
-        {
-            return false;
-        }
-        
+        var pieceAtDestination = board[newX, newY];
+        if (pieceAtDestination != null && pieceAtDestination.IsWhite == IsWhite) return false;
+
+
         // Check if the move goes through any pieces on the board
-        if (GetPieceType() == typeof(Knight)) return TestIsValidMove(newX, newY, _board);
-        
+        if (GetPieceType() == typeof(Knight) || GetPieceType() == typeof(Rat)) return TestIsValidMove(newX, newY, board);
+
         var dx = newX - PieceX;
         var dy = newY - PieceY;
         var steps = Math.Max(Math.Abs(dx), Math.Abs(dy));
@@ -57,34 +54,24 @@ public abstract class Piece
         {
             var x = PieceX + i * xStep;
             var y = PieceY + i * yStep;
-            if (_board[x, y] != null)
-            {
-                return false;
-            }
+            if (board[x, y] != null) return false;
         }
-
-        return TestIsValidMove(newX, newY, _board);
+        
+        return TestIsValidMove(newX, newY, board);
     }
+
     public bool IsMoveValid(int newX, int newY)
     {
-        if (GetPieceType() == typeof(Rat)) return true;
-
         // Check if the move is within the bounds of the board
-        if (newX is < 0 or > 8 || newY is < 0 or > 8)
-        {
-            return false;
-        }
+        if (newX is < 0 or > 8 || newY is < 0 or > 8) return false;
 
         // Check if there is a piece at the destination 
-        var pieceAtDestination = _board[newX, newY];
-        if (pieceAtDestination != null && pieceAtDestination.IsWhite == IsWhite)
-        {
-            return false;
-        }
-        
+        var pieceAtDestination = board[newX, newY];
+        if (pieceAtDestination != null && pieceAtDestination.IsWhite == IsWhite) return false;
+
         // Check if the move goes through any pieces on the board
-        if (GetPieceType() == typeof(Knight)) return IsValidMove(newX, newY, _board);
-        
+        if (GetPieceType() == typeof(Knight) || GetPieceType() == typeof(Rat)) return IsValidMove(newX, newY, board);
+
         var dx = newX - PieceX;
         var dy = newY - PieceY;
         var steps = Math.Max(Math.Abs(dx), Math.Abs(dy));
@@ -94,25 +81,23 @@ public abstract class Piece
         {
             var x = PieceX + i * xStep;
             var y = PieceY + i * yStep;
-            if (_board[x, y] != null)
-            {
-                return false;
-            }
+            if (board[x, y] != null) return false;
         }
 
-        return IsValidMove(newX, newY, _board);
+        return IsValidMove(newX, newY, board);
     }
 }
 
 public class Pawn : Piece
 {
-    public override Type GetPieceType()
-    {
-        return typeof(Pawn);
-    }
     public Pawn(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
     {
         JustMoved = HasMoved = false;
+    }
+
+    public override Type GetPieceType()
+    {
+        return typeof(Pawn);
     }
 
     protected override bool TestIsValidMove(int newX, int newY, ChessBoard board)
@@ -134,11 +119,9 @@ public class Pawn : Piece
             // black pawn moving two squares forward from starting position
             case 2 when HasMoved == false && newX == PieceX && board[newX, newY] == null && !IsWhite:
                 return true;
-
         }
 
         if (board[newX, newY] != null)
-        {
             switch (dx)
             {
                 // white pawn capturing to the right
@@ -154,23 +137,19 @@ public class Pawn : Piece
                 case -1 when dy == 1 && board[newX, newY].IsWhite != IsWhite && !IsWhite:
                     return true;
             }
-        }
 
-        switch (IsWhite)
+        return IsWhite switch
         {
-            case true when Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null &&
-                           board[newX, newY + 1] != null &&
-                           board[newX, newY + 1].GetPieceType() == typeof(Pawn) &&
-                           board.LastMovedPiece == board[newX, newY + 1] && board[newX, newY + 1].IsWhite != IsWhite && board[newX, newY + 1].JustMoved:
-                return true;
-            case false when Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null &&
-                            board[newX, newY - 1] != null &&
-                            board[newX, newY - 1].GetPieceType() == typeof(Pawn) &&
-                            board.LastMovedPiece == board[newX, newY - 1] && board[newX, newY - 1].IsWhite != IsWhite && board[newX, newY - 1].JustMoved:
-                return true;
-            default:
-                return false;
-        }
+            true when Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY + 1] != null &&
+                      board[newX, newY + 1].GetPieceType() == typeof(Pawn) &&
+                      board.LastMovedPiece == board[newX, newY + 1] && board[newX, newY + 1].IsWhite != IsWhite &&
+                      board[newX, newY + 1].JustMoved => true,
+            false when Math.Abs(dx) + Math.Abs(dy) == 2 && board[newX, newY] == null && board[newX, newY - 1] != null &&
+                       board[newX, newY - 1].GetPieceType() == typeof(Pawn) &&
+                       board.LastMovedPiece == board[newX, newY - 1] && board[newX, newY - 1].IsWhite != IsWhite &&
+                       board[newX, newY - 1].JustMoved => true,
+            _ => false
+        };
     }
 
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
@@ -201,7 +180,6 @@ public class Pawn : Piece
         }
 
         if (board[newX, newY] != null)
-        {
             switch (dx)
             {
                 // white pawn capturing to the right
@@ -221,7 +199,6 @@ public class Pawn : Piece
                     HasMoved = true;
                     return true;
             }
-        }
 
         switch (IsWhite)
         {
@@ -248,10 +225,11 @@ public class Pawn : Piece
 
 public class King : Piece
 {
-    private bool _hasMoved;
+    private bool hasMoved;
+
     public King(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
     {
-        _hasMoved = false;
+        hasMoved = false;
     }
 
     public override Type GetPieceType()
@@ -261,49 +239,40 @@ public class King : Piece
 
     protected override bool TestIsValidMove(int newX, int newY, ChessBoard board)
     {
-                //Check for castling
-        if (!_hasMoved && newX == PieceX + 2 && newY == PieceY && board[newX, newY] == null && board[newX - 1, newY] == null)
-        {
-            if (board[newX + 1, newY] != null && board[newX + 1, newY].GetPieceType() == typeof(Rook) && 
-                board[newX + 1, newY].IsWhite == IsWhite && !board[newX + 1, newY].HasMoved)
-            {
-                return true;
-            }
-        }
-
-        if (!_hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null &&
+        //Check for castling
+        if (!hasMoved && newX == PieceX + 2 && newY == PieceY && board[newX, newY] == null &&
             board[newX - 1, newY] == null)
-        {
+            if (board[newX + 1, newY] != null && board[newX + 1, newY].GetPieceType() == typeof(Rook) &&
+                board[newX + 1, newY].IsWhite == IsWhite && !board[newX + 1, newY].HasMoved)
+                return true;
+
+        if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null &&
+            board[newX - 1, newY] == null)
             if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == typeof(Rook) &&
                 board[newX - 2, newY].IsWhite == IsWhite && !board[newX - 2, newY].HasMoved)
-            {
                 return true;
-            }
-        }
         return Math.Abs(newX - PieceX) <= 1 && Math.Abs(newY - PieceY) <= 1;
-
     }
+
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
     {
         //Check for castling
-        if (!_hasMoved && newX == PieceX + 2 && newY == PieceY && board[newX, newY] == null &&
+        if (!hasMoved && newX == PieceX + 2 && newY == PieceY && board[newX, newY] == null &&
             board[newX - 1, newY] == null)
-        {
             if (board[newX + 1, newY] != null && board[newX + 1, newY].GetPieceType() == typeof(Rook) &&
                 board[newX + 1, newY].IsWhite == IsWhite && board[newX + 1, newY].HasMoved == false)
             {
                 board[newX + 1, newY] = null;
-                var rook =new Rook(IsWhite, newX - 1, newY, board);
+                var rook = new Rook(IsWhite, newX - 1, newY, board);
                 board.PlacePiece(rook);
                 board[newX - 1, newY].HasMoved = true;
-                _hasMoved = true;
+                hasMoved = true;
                 return true;
             }
-        }
+
         //queen side castling
-        if (!_hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null &&
+        if (!hasMoved && newX == PieceX - 2 && newY == PieceY && board[newX, newY] == null &&
             board[newX - 1, newY] == null)
-        {
             if (board[newX - 2, newY] != null && board[newX - 2, newY].GetPieceType() == typeof(Rook) &&
                 board[newX - 2, newY].IsWhite == IsWhite && !board[newX - 2, newY].HasMoved)
             {
@@ -311,10 +280,9 @@ public class King : Piece
                 var rook = new Rook(IsWhite, newX + 1, newY, board);
                 board.PlacePiece(rook);
                 board[newX + 1, newY].HasMoved = true;
-                _hasMoved = true;
+                hasMoved = true;
                 return true;
             }
-        }
 
         return Math.Abs(newX - PieceX) <= 1 && Math.Abs(newY - PieceY) <= 1;
     }
@@ -359,6 +327,7 @@ public class Rook : Piece
     {
         return newX == PieceX || newY == PieceY;
     }
+
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
     {
         // Check if the move is along a straight line
@@ -367,6 +336,7 @@ public class Rook : Piece
             HasMoved = true;
             return true;
         }
+
         return false;
     }
 }
@@ -386,6 +356,7 @@ public class Bishop : Piece
     {
         return Math.Abs(newX - PieceX) == Math.Abs(newY - PieceY);
     }
+
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
     {
         // Check if the move is along a diagonal line
@@ -410,6 +381,7 @@ public class Knight : Piece
         var dy = Math.Abs(newY - PieceY);
         return (dx == 1 && dy == 2) || (dx == 2 && dy == 1);
     }
+
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
     {
         // Check if the move is in an L-shape
@@ -424,20 +396,19 @@ public class Rat : Piece
     public Rat(bool isWhite, int x, int y, ChessBoard board) : base(isWhite, x, y, board)
     {
     }
-    
+
     public override Type GetPieceType()
     {
         return typeof(Rat);
     }
-    
+
     protected override bool TestIsValidMove(int newX, int newY, ChessBoard board)
     {
         return true;
     }
-    
+
     protected override bool IsValidMove(int newX, int newY, ChessBoard board)
     {
-        // Check if the move is along a straight line
         return true;
     }
 }

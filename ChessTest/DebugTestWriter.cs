@@ -6,10 +6,7 @@ namespace ChessTest;
 
 public class DebugTextWriter : TextWriter
 {
-    public override Encoding Encoding
-    {
-        get { return Encoding.UTF8; }
-    }
+    public override Encoding Encoding => Encoding.UTF8;
 
     //Required
     public override void Write(char value)
